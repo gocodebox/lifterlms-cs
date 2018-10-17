@@ -1,0 +1,13 @@
+{
+    "name": "lifterlms/lifterlms-cs",
+    "description": "PHP_CodeSniffer rules for LifterLMS projects",
+    "type": "phpcodesniffer-standard",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Team LifterLMS",
+            "email": "help@lifterlms.com"
+        }
+    ],
+    "require": {}
+}

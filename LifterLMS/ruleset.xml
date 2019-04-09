@@ -43,4 +43,15 @@
 		<exclude-pattern>*/index\.php</exclude-pattern>
 	</rule>
 
+	<!-- Allow anonymous functions on a single line in JS -->
+	<rule ref="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket">
+		<exclude-pattern>*/*.js</exclude-pattern>
+	</rule>
+	<rule ref="PEAR.Functions.FunctionCallSignature.CloseBracketLine">
+		<exclude-pattern>*/*.js</exclude-pattern>
+	</rule>
+	<rule ref="PEAR.Functions.FunctionCallSignature.MultipleArguments">
+		<exclude-pattern>*/*.js</exclude-pattern>
+	</rule>
+
 </ruleset>

@@ -23,6 +23,16 @@ class FileCommentSniff extends Squiz_FileCommentSniff {
 
         $tokens       = $phpcsFile->getTokens();
         $commentStart = $phpcsFile->findNext(T_WHITESPACE, ($stackPtr + 1), null, true);
+
+
+        if (isset($tokens[$commentStart]['comment_closer']) === false
+            || ($tokens[$tokens[$commentStart]['comment_closer']]['content'] === ''
+            && $tokens[$commentStart]['comment_closer'] === ($phpcsFile->numTokens - 1))
+        ) {
+            // Don't process an unfinished file comment during live coding.
+            return ($phpcsFile->numTokens + 1);
+        }
+
         $commentEnd   = $tokens[$commentStart]['comment_closer'];
 
         // Required tags in correct order.

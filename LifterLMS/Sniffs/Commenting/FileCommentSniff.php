@@ -51,9 +51,16 @@ class FileCommentSniff extends Squiz_FileCommentSniff {
             $isRequired = isset($required[$name]);
 
             if ($isRequired === true && in_array($name, $foundTags, true) === true) {
-                $error = 'Only one %s tag is allowed in a file comment';
-                $data  = [$name];
-                $phpcsFile->addError($error, $tag, 'Duplicate'.ucfirst(substr($name, 1)).'Tag', $data);
+
+            	// Templates can have multiple since tags.
+            	if ( '@since' !== $name || ( '@since' === $name && false === strpos( $phpcsFile->path, '/templates/' ) ) ) {
+
+	                $error = 'Only one %s tag is allowed in a file comment';
+	                $data  = [$name];
+	                $phpcsFile->addError($error, $tag, 'Duplicate'.ucfirst(substr($name, 1)).'Tag', $data);
+
+            	}
+
             }
 
             $foundTags[] = $name;
@@ -80,6 +87,9 @@ class FileCommentSniff extends Squiz_FileCommentSniff {
                 $data  = [$tag];
                 $phpcsFile->addError($error, $commentEnd, 'Missing'.ucfirst(substr($tag, 1)).'Tag', $data);
             }
+
+            // Exclude potential duplicate since tags.
+            $foundTags = array_unique( $foundTags );
 
             if (isset($foundTags[$pos]) === false) {
                 break;

@@ -22,6 +22,13 @@
 	<rule ref="WordPress">
 		<!-- @todo: need to find a way to handle escaping custom functions easily -->
 		<exclude name="WordPress.Security.EscapeOutput" />
+
+		<!-- Exclude warnings about DB queries. Direct queries are used when necessary and meta/tax queries are very often unavoidable. -->
+		<exclude name="WordPress.DB.DirectDatabaseQuery.DirectQuery" />
+		<exclude name="WordPress.DB.SlowDBQuery.slow_db_query_meta_key" />
+		<exclude name="WordPress.DB.SlowDBQuery.slow_db_query_meta_value" />
+		<exclude name="WordPress.DB.SlowDBQuery.slow_db_query_meta_query" />
+		<exclude name="WordPress.DB.SlowDBQuery.slow_db_query_tax_query" />
 	</rule>
 
 	<!-- Add `llms_verify_nonce` to the list of allowed nonce verification functions -->

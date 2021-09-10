@@ -18,6 +18,9 @@
     <exclude-pattern>node_modules/*</exclude-pattern>
     <exclude-pattern>gulpfile.js/*</exclude-pattern>
 
+    <!-- Exclude JS asset.php files generated via the @wordpress/dependency-extraction-webpack-plugin -->
+    <exclude-pattern>assets/**/*.asset.php</exclude-pattern>
+
 	<rule ref="WordPress">
 		<!-- @todo: need to find a way to handle escaping custom functions easily -->
 		<exclude name="WordPress.Security.EscapeOutput" />

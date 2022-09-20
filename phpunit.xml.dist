@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<phpunit
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/8.1/phpunit.xsd"
+	bootstrap="tests/bootstrap.php"
+	colors="true"
+	backupGlobals="false"
+	backupStaticAttributes="false"
+	beStrictAboutChangesToGlobalState="true"
+	beStrictAboutOutputDuringTests="true"
+	beStrictAboutTestsThatDoNotTestAnything="true"
+	beStrictAboutTodoAnnotatedTests="true"
+	cacheResult="true"
+	cacheResultFile="tmp/.phpunit.result.cache"
+	stopOnDefect="true"
+	executionOrder="defects"
+>
+
+	<testsuites>
+		<testsuite name="LifterLMS Coding Standards">
+			<directory suffix="Test.php">./tests</directory>
+		</testsuite>
+	</testsuites>
+
+</phpunit>

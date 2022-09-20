@@ -1,15 +1,79 @@
 <?php
 namespace LifterLMSCS\LifterLMS\Sniffs\Commenting;
-use PHP_CodeSniffer\Standards\Squiz\Sniffs\Commenting\FileCommentSniff as Squiz_FileCommentSniff;
+
+use PHP_CodeSniffer\Standards\Squiz\Sniffs\Commenting\FileCommentSniff as SquizFileCommentSniff;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Util\Tokens;
+
 /**
  * Customizes the default Squiz_FileCommentSniff to match tags
  * in the order specified by LifterLMS documentation standards
  *
  * @link https://github.com/gocodebox/lifterlms/blob/master/docs/documentation-standards.md#file-headers
  */
-class FileCommentSniff extends Squiz_FileCommentSniff {
+class FileCommentSniff extends SquizFileCommentSniff {
+
+	public const CODE_INVALID = 'InvalidTag';
+
+	public const CODE_VALID_WRONG_GROUP = 'ValidTagInWrongGroup';
+
+	public const CODE_EXTRA_WRONG_GROUP = 'ExtraTagInWrongGroup';
+
+	public const CODE_ORDER = 'TagOrder';
+
+	public const CODE_MISSING = 'TagMissing';
+
+	/**
+	 * List of the expected tag groups and their order within each group.
+	 *
+	 * @var string[]
+	 */
+	public $groups = [
+		'@package',
+		'@since @version',
+	];
+
+	/**
+	 * Whether or not extra tags (not defined in $groups) are allowed.
+	 *
+	 * If `true`, any extra tags should be found in their own group after
+	 * the defined groups.
+	 *
+	 * @var boolean
+	 */
+	public $allowExtraTags = false;
+
+	protected function getExpectedTags() {
+
+		return array_map(
+			function( string $group ): array {
+				return explode( ' ', $group );
+			},
+			$this->groups
+		);
+
+	}
+
+	protected function flattenGroups( $groups ) {
+		$flat = [];
+		foreach ( $groups as $group ) {
+			$flat = array_merge( $flat, $group );
+		}
+		return $flat;
+	}
+
+	protected function findExpectedTagGroupForTag( $groups, $tagName ) {
+
+		foreach ( $groups as $groupIndex => $group ) {
+			if ( in_array( $tagName, $group, true ) ) {
+				return $groupIndex;
+			}
+		}
+
+		return false;
+
+	}
+
 	/**
 	 * Processes this test, when one of its tokens is encountered.
 	 *
@@ -21,94 +85,132 @@ class FileCommentSniff extends Squiz_FileCommentSniff {
 	 */
 	public function process( File $phpcsFile, $stackPtr ) {
 
-        $tokens       = $phpcsFile->getTokens();
-        $commentStart = $phpcsFile->findNext(T_WHITESPACE, ($stackPtr + 1), null, true);
+		$tokens       = $phpcsFile->getTokens();
+		$commentStart = $phpcsFile->findNext( T_WHITESPACE, ( $stackPtr + 1 ), null, true );
+
+		// Don't process an unfinished file comment during live coding.
+		if (
+			isset( $tokens[ $commentStart ]['comment_closer']) === false ||
+			(
+				$tokens[ $tokens[ $commentStart ]['comment_closer']]['content'] === '' &&
+				$tokens[ $commentStart ]['comment_closer'] === ( $phpcsFile->numTokens - 1 )
+			)
+		) {
+			return ( $phpcsFile->numTokens + 1 );
+		}
+
+		$expected            = $this->getExpectedTags();
+		$validTags           = $this->flattenGroups( $expected );
+		$foundTags           = [];
+		$totalExpectedGroups = count( $expected );
+
+		$actual       = [];
 
 
-        if (isset($tokens[$commentStart]['comment_closer']) === false
-            || ($tokens[$tokens[$commentStart]['comment_closer']]['content'] === ''
-            && $tokens[$commentStart]['comment_closer'] === ($phpcsFile->numTokens - 1))
-        ) {
-            // Don't process an unfinished file comment during live coding.
-            return ($phpcsFile->numTokens + 1);
-        }
 
-        $commentEnd   = $tokens[$commentStart]['comment_closer'];
+		$currGroupIndex      = 0;
 
-        // Required tags in correct order.
-        $required = [
-            '@package'    => true,
-            '@since'      => true,
-            '@version'    => true,
-            // '@subpackage' => true,
-            // '@author'     => true,
-            // '@copyright'  => true,
-        ];
 
-        $foundTags = [];
-        foreach ($tokens[$commentStart]['comment_tags'] as $tag) {
-            $name       = $tokens[$tag]['content'];
-            $isRequired = isset($required[$name]);
 
-            if ($isRequired === true && in_array($name, $foundTags, true) === true) {
+		$empty        = [
+			T_DOC_COMMENT_WHITESPACE,
+			T_DOC_COMMENT_STAR,
+		];
 
-            	// Templates can have multiple since tags.
-            	if ( '@since' !== $name || ( '@since' === $name && false === strpos( $phpcsFile->path, '/templates/' ) ) ) {
+		// $commentEnd = $tokens [ $commentStart ]['comment_closer'];
 
-	                $error = 'Only one %s tag is allowed in a file comment';
-	                $data  = [$name];
-	                $phpcsFile->addError($error, $tag, 'Duplicate'.ucfirst(substr($name, 1)).'Tag', $data);
+		foreach ( $tokens[ $commentStart ]['comment_tags'] as $tagIndex => $tag ) {
 
-            	}
+			// Current tag name.
+			$name = $tokens[ $tag ]['content'];
 
-            }
+			// Setup an actual representation of the existing tag groups.
+			$actual[ $currGroupIndex ][] = $name;
 
-            $foundTags[] = $name;
+			// Setup the current expected and actual groups.
+			$currGroup       = $expected[ $currGroupIndex ] ?? array();
+			$actualCurrGroup = $actual[ $currGroupIndex ] ?? array();
 
-            if ($isRequired === false) {
-                continue;
-            }
+			// Check if the next tag is in the same group as the current tag.
+			$nextTag = $phpcsFile->findNext( [ ...$empty, T_DOC_COMMENT_STRING ], $tag + 1, null, true );
+			if ( 1 !== $tokens[ $nextTag ]['line'] - $tokens[ $tag ]['line'] ) {
+				$currGroupIndex++;
+			}
 
-            $string = $phpcsFile->findNext(T_DOC_COMMENT_STRING, $tag, $commentEnd);
-            if ($string === false || $tokens[$string]['line'] !== $tokens[$tag]['line']) {
-                $error = 'Content missing for %s tag in file comment';
-                $data  = [$name];
-                $phpcsFile->addError($error, $tag, 'Empty'.ucfirst(substr($name, 1)).'Tag', $data);
-                continue;
-            }
+			$isValidTag = in_array( $name, $validTags, true );
 
-        }//end foreach
+			// If extra tags are allowed, the tag isn't a valid predefined tag, and this the expected extra tag group, we can skip remaining checks.
+			if ( $this->allowExtraTags && ! $isValidTag && $totalExpectedGroups === $currGroupIndex ) {
+				continue;
+			}
 
-        // Check if the tags are in the correct position.
-        $pos = 0;
-        foreach ($required as $tag => $true) {
-            if (in_array($tag, $foundTags, true) === false) {
-                $error = 'Missing %s tag in file comment';
-                $data  = [$tag];
-                $phpcsFile->addError($error, $commentEnd, 'Missing'.ucfirst(substr($tag, 1)).'Tag', $data);
-            }
+			$foundTags[] = $name;
 
-            // Exclude potential duplicate since tags.
-            $foundTags = array_unique( $foundTags );
+			// The tag is invalid or in the incorrect group.
+			if ( ! in_array( $name, $currGroup, true ) ) {
 
-            if (isset($foundTags[$pos]) === false) {
-                break;
-            }
+				$code = self::CODE_INVALID;
+				$msg  = sprintf(
+					'The tag "%s" is invalid',
+					$name,
+				);
+				$base = sprintf(
+					'The tag "%1$s" should not be in the tag group at position %2$d',
+					$name,
+					$currGroupIndex
+				);
 
-            if ($foundTags[$pos] !== $tag) {
-                $error = 'The tag in position %s should be the %s tag';
-                $data  = [
-                    ($pos + 1),
-                    $tag,
-                ];
-                $phpcsFile->addError($error, $tokens[$commentStart]['comment_tags'][$pos], ucfirst(substr($tag, 1)).'TagOrder', $data);
-            }
+				if ( $isValidTag ) {
+					$code = self::CODE_VALID_WRONG_GROUP;
+					$msg  = $base . sprintf(
+						'; The tag should be in the tag group at position %1$d',
+						$this->findExpectedTagGroupForTag( $expected, $name )
+					);
+				} elseif ( $this->allowExtraTags ) {
+					$code = self::CODE_EXTRA_WRONG_GROUP;
+					$msg  =  $base . sprintf(
+						'; Extra tags should be in the tag group at position %1$d',
+						$totalExpectedGroups
+					);
+				}
 
-            $pos++;
-        }//end foreach
+				$phpcsFile->addError( $msg, $tag, $code );
+			}
 
-        // Ignore the rest of the file.
-        return ($phpcsFile->numTokens + 1);
 
-    }
+			$expectedPositionInGroup = array_search( $name, $currGroup, true );
+			$actualPositionInGroup   = array_search( $name, $actualCurrGroup, true );
+
+			if ( $isValidTag && $expectedPositionInGroup !== $actualPositionInGroup ) {
+				$phpcsFile->addError(
+					sprintf(
+						'The tag "%1$s" was found in position %2$d but should be in position %3$d',
+						$name,
+						$actualPositionInGroup,
+						$expectedPositionInGroup
+					),
+					$tag,
+					self::CODE_ORDER
+				);
+			}
+		}
+
+		// Throw errors for any missing tags.
+		foreach ( array_diff( $validTags, $foundTags ) as $missingTag ) {
+
+			$phpcsFile->addError(
+				sprintf(
+					'Missing tag "%1$s"; The tag should be present in the tag group at position %2$d',
+					$missingTag,
+					$this->findExpectedTagGroupForTag( $expected, $missingTag )
+				),
+				$commentStart,
+				self::CODE_MISSING
+			);
+		}
+
+		// Ignore the rest of the file.
+		return ( $phpcsFile->numTokens + 1 );
+
+	}
 }

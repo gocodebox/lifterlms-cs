@@ -1,0 +1,515 @@
+<?xml version="1.0"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="LifterLMS-Modern" namespace="LifterLMS-CS\LifterLMS" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xsd">
+
+	<description>LifterLMS "Modern" PHP Coding Standards</description>
+
+	<!-- Default quality of life configurations -->
+
+	<!-- Only evaluate PHP files. -->
+	<arg name="extensions" value="php" />
+
+	<!-- Show Progress -->
+	<arg value="sp" />
+
+	<!-- Set the memory limit to 256M.
+		 For most standard PHP configurations, this means the memory limit will temporarily be raised.
+		 Ref: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Advanced-Usage#specifying-phpini-settings
+	-->
+	<ini name="memory_limit" value="256M" />
+
+	<!-- Check up to 20 files simultaneously. -->
+	<!-- <arg name="parallel" value="20" /> -->
+
+	<!-- Show sniff codes in all reports. -->
+	<arg value="ps" />
+
+	<!-- Exclude directories -->
+	<exclude-pattern type="relative">.github/*</exclude-pattern>
+	<exclude-pattern type="relative">docs/*</exclude-pattern>
+	<exclude-pattern type="relative">tmp/*</exclude-pattern>
+	<exclude-pattern type="relative">vendor/*</exclude-pattern>
+	<exclude-pattern type="relative">node_modules/*</exclude-pattern>
+
+	<!-- Parser-Start-Token -->
+
+	<!-- LifterLMS "Modern" PHP Coding Standard -->
+
+	<!-- 1. Overview -->
+
+	<!--
+		Standard Name: `LifterLMS-Modern`
+
+		PHPCS Ruleset File: [ruleset.xml](https://github.com/gocodebox/lifterlms-cs/LifterLMS-Modern/ruleset.xml)
+
+		This standards exists for new LifterLMS add-ons which opt-in to the modern standard.
+
+		The goal of the modern standard is to require usage of less-archaic (though not necessarily bleeding edge) PHP
+		code which are not found in the WordPress core coding standards and may be uncommon for many WordPress plugins
+		and themes.
+
+		Our modern projects require PHP 7.4 or later and utilize namepsaces, [PSR-4 autoloading](https://www.php-fig.org/psr/psr-4/),
+		strict typing, short array syntax, and other language features as described below.
+	-->
+
+
+	<!-- 2. General -->
+
+	<!-- 2.1. Basic Coding Standard -->
+
+	<!--
+		Code must follow rules outlined in the WordPress Coding Standard.
+
+		Code MUST follow the rules outlined in the[WordPress PHP Coding Standard](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/),
+		with the following exceptions:
+	-->
+	<rule ref="WordPress">
+
+		<!-- + File names should follow PSR-4 autoloading standards -->
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+
+		<!-- + The Short Array syntax MUST be used. -->
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found" />
+
+		<!-- Conflicts with PSR12.Files.FileHeader @parserIgnore -->
+		<exclude name="Squiz.Commenting.FileComment.SpacingAfterOpen" />
+
+		<exclude name="PEAR.NamingConventions.ValidClassName" />
+
+		<!--
+			Class property docblocks MUST NOT include an @var block unless it provides information
+			which cannot be derived from the property's native typehint.
+
+			See SlevomatCodingStandard.TypeHints.PropertyTypeHint for more information.
+
+			@parserIgnore
+		-->
+		<exclude name="Squiz.Commenting.VariableComment.MissingVar" />
+
+		<!-- Direct database queries are frequently necessary. This is an unreasonable warning. @parserIgnore -->
+		<exclude name="WordPress.DB.DirectDatabaseQuery.DirectQuery" />
+
+	</rule>
+
+	<!-- Don't discourage `putenv()` when used in test cases. @parserIgnore -->
+	<rule ref="WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_putenv">
+		<exclude-pattern>tests/phpunit/**/*.php</exclude-pattern>
+	</rule>
+
+	<!-- 2.2. Files -->
+
+	<!-- 2.2.1. File names -->
+	<!-- PHP File names MUST adhere to the [PSR-4: Autoloader](https://www.php-fig.org/psr/psr-4/) standard. -->
+
+	<!-- 2.2.2. Start of file -->
+	<!--
+		The header of a PHP file may consist of a number of different blocks. If present, each of the blocks below MUST
+		be separated by a single blank line, and MUST NOT contain a blank line. Each block MUST be in the order listed
+		below, although blocks that are not relevant may be omitted.
+
+		+ Opening php tag.
+		+ File-level docblock.
+		+ One or more declare statements.
+		+ The namespace declaration of the file.
+		+ One or more class-based use import statements.
+		+ One or more function-based use import statements.
+		+ One or more constant-based use import statements.
+		+ The remainder of the code in the file.
+	-->
+	<rule ref="PSR12.Files.FileHeader" />
+
+	<!-- Use import statements SHOULD be alphabetically sorted and ordered by classes, functions, and constants. -->
+	<rule ref="SlevomatCodingStandard.Namespaces.AlphabeticallySortedUses" />
+
+	<!-- 2.2.3. End of file -->
+	<!-- All PHP files MUST end with a single blank line. -->
+	<!-- @see PSR2.Files.EndFileNewline -->
+
+	<!-- The closing `?>` tag MUST be omitted from files containing only PHP. -->
+	<!-- @see PSR2.Files.ClosingTag -->
+
+	<!-- 2.3. Lines -->
+	<!--
+		There MUST NOT be a hard limit on line length.
+
+		The soft limit on line length must be 120 characters.
+
+		Lines SHOULD NOT be longer than 80 characters; lines longer than 80 characters SHOULD be split into multiple
+		subsequent lines of no more than 80 characters each.
+	-->
+	<rule ref="Generic.Files.LineLength">
+		<properties>
+			<property name="lineLimit" value="120"/>
+			<property name="absoluteLineLimit" value="0"/>
+		</properties>
+	</rule>
+
+	<!-- All PHP files MUST use the Unix LF (linefeed) line ending only. -->
+	<!-- @see Generic.Files.LineEndings -->
+	<!-- @parserIgnore Configured as the default "\n" -->
+
+	<!--
+		There MUST NOT be trailing whitespace at the end of lines.
+
+		Blank lines MAY be added to improve readability and to indicate related blocks of code except where explicitly
+		forbidden.
+	-->
+	<!-- @see Squiz.WhiteSpace.SuperfluousWhitespace -->
+
+	<!-- There MUST NOT be more than one statement per line. -->
+	<!-- @see Generic.Formatting.DisallowMultipleStatements -->
+
+	<!-- 2.4. Indentation -->
+	<!-- @see https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/#whitespace -->
+
+	<!-- Indentation should always reflect a logical structure. -->
+	<!-- @see Generic.WhiteSpace.ScopeIndent -->
+
+	<!--
+		At the beginning of a line, PHP Code MUST use a **real tab** for indentation, and MUST NOT use spaces for
+		indenting.
+
+		Spaces MUST be used for mid-line alignment, and tabs MUST NOT be used for mid-line alignment.
+	-->
+	<!-- @see Generic.WhiteSpace.DisallowSpaceIndent -->
+	<!-- @see WordPress.WhiteSpace.PrecisionAlignment -->
+
+
+	<!-- 2.5. Character Encoding -->
+
+	<!-- PHP code MUST use only UTF-8 without BOM. -->
+	<!-- @see Generic.Files.ByteOrderMark -->
+
+	<!-- 2.6. PHP Tags -->
+
+	<!-- PHP code MUST use the long `<?php ?>` tags; it MUST NOT use the other tag variations. -->
+	<!-- @see Generic.PHP.DisallowAlternativePHPTags -->
+	<!-- @see Generic.PHP.DisallowShortOpenTag -->
+
+	<!-- 2.7. Keyword and Type Capitalization -->
+
+	<!-- PHP keywords and types MUST be in lower case. -->
+	<!-- @see Generic.PHP.LowerCaseKeyword -->
+	<!-- @see Generic.PHP.LowerCaseType -->
+
+	<!-- The PHP constants `true`, `false`, and `null` MUST be in lower case. -->
+	<!-- @see Generic.PHP.LowerCaseConstant -->
+
+	<!-- Short form of type keywords MUST be used; i.e. `bool` instead of `boolean`, `int` instead of `integer` etc. -->
+	<!-- @see PSR12.Keywords.ShortFormTypeKeywords -->
+	<rule ref="SlevomatCodingStandard.TypeHints.LongTypeHints" />
+
+	<!-- 2.8. Side Effects -->
+
+	<!--
+		A file SHOULD declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it
+		SHOULD execute logic with side effects, but SHOULD NOT do both.
+	-->
+	<rule ref="PSR1.Files.SideEffects" />
+
+	<!-- 3. Strict Typing and Type Hints -->
+
+	<!-- PHP files MUST use strict typing. -->
+	<rule ref="Generic.PHP.RequireStrictTypes" />
+
+	<!--
+		Native type hints MUST be used for class property declarations.
+
+		A function or class method with a void return should not include a useless @return docblock.
+	-->
+	<rule ref="SlevomatCodingStandard.TypeHints.PropertyTypeHint">
+		<exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingTraversableTypeHintSpecification" />
+	</rule>
+
+	<!-- Native type hints MUST be used for function and class method parameter declarations. -->
+	<rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint">
+		<exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingTraversableTypeHintSpecification" />
+	</rule>
+
+	<!-- Native type hints MUST be used for function and class method return declarations. -->
+	<rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint">
+		<exclude name="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingTraversableTypeHintSpecification" />
+	</rule>
+
+	<!-- Union type hints SHOULD be used in favor of mixed. -->
+	<rule ref="SlevomatCodingStandard.TypeHints.DisallowMixedTypeHint" />
+
+	<!--
+		Type hints should not include spaces between pipe characters.
+
+		The shorthand question mark character for nullable types should be used in favor of `null|<type>`.
+	-->
+	<rule ref="SlevomatCodingStandard.TypeHints.UnionTypeHintFormat">
+		<properties>
+			<property name="enable" value="true" />
+			<property name="withSpaces" value="no" />
+			<property name="shortNullable" value="yes" />
+		</properties>
+	</rule>
+
+	<!--
+		When a return type declaration is present, there MUST be one space after the colon followed by the type
+		declaration. The colon and declaration MUST be on the same line as the argument list closing parenthesis with
+		no spaces between the two characters.
+	-->
+	<rule ref="PSR12.Functions.ReturnTypeDeclaration" />
+
+	<!-- 4. Classes, Properties, and Methods -->
+
+	<!-- 4.1 Namespace and Class Names -->
+
+	<!--
+		Class names MUST be declared in PascalCase (or StudlyCaps), where where the first letter of each word is
+		capitalized including the very first letter.
+	-->
+	<rule ref="Squiz.Classes.ValidClassName" />
+
+	<!--
+		Namespaces and classes MUST follow PSR-0.
+
+		Each class is in a file by itself, and is in a namespace of at least one level: a top-level vendor name.
+	-->
+	<rule ref="PSR1.Classes.ClassDeclaration" />
+
+	<!-- 4.2 Class Structure -->
+	<!--
+		The Structure of a class MUST match the following structure of class member groups:
+
+			1. Use import statements
+			2. Enum cases
+			3. Constants: private, protected, public
+			4. Static properties: private, protected, public
+			5. Properties: private, protected, public
+			6. Methods
+			  6a. Constructors
+			  6b. Destructor
+			  6c. Magic methods
+			  6d. Static abstract methods: protected, public
+			  6e. Abstract methods: protected, public
+			  6f. Static final methods: protected, public
+			  6g. Final methods: protected, public
+			  6h. Static methods: private, protected, public
+			  6i. Methods: private, protected, public
+
+		Items within each group SHOULD be alphabetized by member name.
+	-->
+	<rule ref="SlevomatCodingStandard.Classes.ClassStructure">
+		<properties>
+			<property name="groups" type="array">
+				<!-- 1. Use import statements @parserIgnore -->
+				<element value="uses"/>
+
+				<!-- 2. Enum cases @parserIgnore -->
+				<element value="enum cases"/>
+
+				<!-- 3. Constants: private, protected, public @parserIgnore -->
+				<element value="private constants"/>
+				<element value="protected constants"/>
+				<element value="public constants"/>
+
+				<!-- 4. Static properties: private, protected, public @parserIgnore -->
+				<element value="private static properties" />
+				<element value="protected static properties" />
+				<element value="public static properties" />
+
+				<!-- 5. Properties: private, protected, public @parserIgnore -->
+				<element value="private properties" />
+				<element value="protected properties" />
+				<element value="public properties" />
+
+				<!-- 6. Methods @parserIgnore -->
+				<!-- 6a. Constructors @parserIgnore -->
+				<element value="constructor" />
+				<element value="static constructors" />
+
+				<!-- 6b. Destructor @parserIgnore -->
+				<element value="destructor" />
+
+				<!-- 6c. Magic methods @parserIgnore -->
+				<element value="magic methods" />
+
+				<!-- 6d. Static abstract methods: protected, public @parserIgnore -->
+				<element value="protected static abstract methods" />
+				<element value="public static abstract methods" />
+
+				<!-- 6e. Abstract methods: protected, public @parserIgnore -->
+				<element value="protected abstract methods" />
+				<element value="public abstract methods" />
+
+				<!-- 6f. Static final methods: protected, public @parserIgnore -->
+				<element value="protected static final methods" />
+				<element value="public static final methods" />
+
+				<!-- 6g. Final methods: protected, public @parserIgnore -->
+				<element value="protected final methods" />
+				<element value="public final methods" />
+
+				<!-- 6h. Static methods: private, protected, public @parserIgnore -->
+				<element value="private static methods" />
+				<element value="protected static methods" />
+				<element value="public static methods" />
+
+				<!-- 6i. Methods: private, protected, public @parserIgnore -->
+				<element value="private methods" />
+				<element value="protected methods" />
+				<element value="public methods" />
+			</property>
+		</properties>
+	</rule>
+
+	<!-- 4.3 Class Spacing -->
+	<!-- Class members, constants, properties, and methods MUST each be separated by a single empty line -->
+	<rule ref="SlevomatCodingStandard.Classes.ClassMemberSpacing">
+		<properties>
+			<property name="linesCountBetweenMembers" value="1" />
+		</properties>
+	</rule>
+	<rule ref="SlevomatCodingStandard.Classes.ConstantSpacing">
+		<properties>
+			<property name="minLinesCountBeforeWithComment" value="1" />
+			<property name="maxLinesCountBeforeWithComment" value="1" />
+			<property name="minLinesCountBeforeWithoutComment" value="1" />
+			<property name="maxLinesCountBeforeWithoutComment" value="1" />
+		</properties>
+	</rule>
+	<rule ref="SlevomatCodingStandard.Classes.PropertySpacing">
+		<properties>
+			<property name="minLinesCountBeforeWithComment" value="1" />
+			<property name="maxLinesCountBeforeWithComment" value="1" />
+			<property name="minLinesCountBeforeWithoutComment" value="1" />
+			<property name="maxLinesCountBeforeWithoutComment" value="1" />
+		</properties>
+	</rule>
+	<rule ref="SlevomatCodingStandard.Classes.MethodSpacing">
+		<properties>
+			<property name="minLinesCount" value="1" />
+			<property name="maxLinesCount" value="1" />
+		</properties>
+	</rule>
+
+	<!-- 4.4. Constants -->
+	<!-- The visibility of class constants MUST be declared. -->
+	<rule ref="SlevomatCodingStandard.Classes.ClassConstantVisibility" />
+
+	<!-- 4.5. Properties -->
+	<!--
+		Visibility MUST be declared on all properties.
+
+		The var keyword MUST NOT be used to declare a property.
+
+		There MUST NOT be more than one property declared per statement.
+
+		Property names SHOULD NOT be prefixed with a single underscore to indicate protected or private visibility.
+	-->
+	<!-- @see PSR2.Classes.PropertyDeclaration -->
+
+	<!-- 4.6. Methods -->
+
+	<!-- The visibility of methods MUST be declared. -->
+	<!-- @see Squiz.Scope.MethodScope -->
+
+	<!-- Method names SHOULD NOT be prefixed with a single underscore to indicate protected or private visibility. -->
+	<!-- @see PSR2.Methods.MethodDeclaration -->
+	<!-- @see Squiz.WhiteSpace.ScopeKeywordSpacing -->
+
+	<!-- Method names MUST use lowercase letters separated by underscores and MUST NOT use camelCase. -->
+	<!-- @see WordPress.NamingConventions.ValidFunctionName -->
+
+
+	<!-- 5. Functions -->
+
+
+	<!-- 6. Arrays -->
+
+	<!-- 6.1. Short Array Syntax -->
+	<!-- The short array syntax MUST be used, and the long array syntax MUST NOT be used. -->
+	<rule ref="Generic.Arrays.DisallowLongArraySyntax.Found">
+		<type>error</type>
+	</rule>
+
+	<!-- 6.2. Implicit Array Creation -->
+	<!-- Arrays must be explicitly created before being assigned values. -->
+	<rule ref="SlevomatCodingStandard.Arrays.DisallowImplicitArrayCreation" />
+
+	<!-- 6.3. White Space and Indentation -->
+	<!-- When an associative array contains more than one item, each item array SHOULD start on a new line. -->
+	<!-- @see WordPress.Arrays.ArrayDeclarationSpacing -->
+
+	<!-- The assignment double-arrows in an associative array SHOULD be aligned using mid-line space indentation. -->
+	<!-- @see WordPress.Arrays.MultipleStatementAlignment -->
+
+
+	<!-- 6.4 Trailing Comma -->
+	<!-- A trailing comma SHOULD be included after the last item in a multi-line array. -->
+	<!-- @see WordPress.Arrays.CommaAfterArrayItem -->
+
+<!-- @parserIgnore Maybe add? <rule ref="PEAR.Functions.ValidDefaultValue"/> -->
+
+
+	<!--  -->
+	<!--  -->
+	<!--  -->
+	<!--  -->
+	<!--  -->
+	<!--  -->
+	<!--  -->
+	<!--  -->
+	<!--  -->
+	<!--  -->
+	<!--  -->
+	<!--  -->
+
+
+	<!-- Constants MUST be declared in all upper case with underscore separators. -->
+	<rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<!-- The null coalesce "??" operator should be used in favor of ternary whenvere possible. -->
+	<rule ref="SlevomatCodingStandard.ControlStructures.RequireNullCoalesceOperator" />
+
+	<!-- If a class or function is imported it MUST be used in the file. -->
+	<rule ref="SlevomatCodingStandard.Namespaces.UnusedUses" />
+
+	<!-- Importing from the same namespace is prohibited. -->
+	<rule ref="SlevomatCodingStandard.Namespaces.UseFromSameNamespace" />
+
+	<!-- Parenthesis should only be used when necessary. -->
+	<rule ref="SlevomatCodingStandard.PHP.UselessParentheses" />
+
+
+
+
+
+
+
+	<!-- <rule ref="Squiz.Commenting.ClassComment" /> -->
+	<rule ref="LifterLMS.Commenting.FileComment">
+		<properties>
+			<property name="groups" type="array">
+				<element value="@package" />
+				<element value="@since @version" />
+			</property>
+
+<!-- 			<property name="allowedTags" type="array">
+				<element value="@package" />
+				<element value="@since" />
+			</property> -->
+		</properties>
+	</rule>
+
+
+
+</ruleset>

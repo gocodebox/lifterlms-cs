@@ -1,34 +1,35 @@
 {
-    "name": "lifterlms/lifterlms-cs",
-    "description": "PHP_CodeSniffer rules for LifterLMS projects",
-    "type": "phpcodesniffer-standard",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Team LifterLMS",
-            "email": "help@lifterlms.com"
-        }
-    ],
-    "require": {
-        "php": ">=5.6",
-        "squizlabs/php_codesniffer": "^3.3.2",
-        "wp-coding-standards/wpcs": "^2.1.1",
-        "phpcompatibility/phpcompatibility-wp": "^2.0.0",
-        "phpmd/phpmd": "^2.6.0"
-    },
-    "require-dev": {
-        "phpcompatibility/php-compatibility": "^9.0.0",
-        "roave/security-advisories": "dev-master"
-    },
-    "scripts": {
-        "config-set" : [
-            "\"vendor/bin/phpcs\" --config-set installed_paths ../../..,../../../vendor/wp-coding-standards/wpcs,../../../vendor/phpcompatibility/php-compatibility,../../../vendor/phpcompatibility/phpcompatibility-wp",
-            "\"vendor/bin/phpcs\" --config-set default_standard LifterLMS"
-        ],
-        "check-cs": [
-            "\"vendor/bin/phpcs\" --runtime-set testVersion 5.6-"
-        ],
-        "post-install-cmd": "composer config-set",
-        "post-update-cmd": "composer config-set"
+  "name": "lifterlms/lifterlms-cs",
+  "description": "PHP_CodeSniffer rules for LifterLMS projects",
+  "type": "phpcodesniffer-standard",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Team LifterLMS",
+      "email": "help@lifterlms.com"
     }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=7.4",
+    "wp-coding-standards/wpcs": "dev-develop",
+    "phpcompatibility/phpcompatibility-wp": "^2.0.0",
+    "slevomat/coding-standard": "^8.4"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "LifterLMSCS\\LifterLMS\\": "LifterLMS/"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  },
+  "scripts": {
+    "tests": "\"vendor/bin/phpunit\""
+  }
 }

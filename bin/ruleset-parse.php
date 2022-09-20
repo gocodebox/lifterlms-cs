@@ -35,7 +35,7 @@ function format_line( $line, $add_new_line = true ) {
 	// Add Markdown headers based on the list notation.
 	// 1. = #; 1.2 = ##; 1.2.3 = ###; etc...
 	if ( preg_match( '/^(\d{1,3}\.)(\d{1,3})?/', $line, $header_matches ) ) {
-		$level  = count( array_filter( explode( '.', $header_matches[0] ) ) );
+		$level  = count( array_filter( explode( '.', $header_matches[0] ) ) ) + 1;
 		$before = '';
 		if ( 1 === $level ) {
 			$before = NEWLINE;

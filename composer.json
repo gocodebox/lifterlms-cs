@@ -30,6 +30,9 @@
     }
   },
   "scripts": {
-    "tests": "\"vendor/bin/phpunit\""
+    "tests": "\"vendor/bin/phpunit\"",
+    "docs": [
+        "@php ./bin/ruleset-parse.php LifterLMS-Modern/ruleset.xml"
+    ]
   }
 }

@@ -34,6 +34,10 @@
 
 	<!-- LifterLMS "Modern" PHP Coding Standard -->
 
+
+	<!-- Table-of-Contents-Token -->
+
+
 	<!-- 1. Overview -->
 
 	<!--
@@ -49,7 +53,7 @@
 
 		Our modern projects require PHP 7.4 or later and utilize namepsaces, [PSR-4 autoloading](https://www.php-fig.org/psr/psr-4/),
 		strict typing, short array syntax, and other language features as described below.
-	-->
+	-->r
 
 
 	<!-- 2. General -->
@@ -67,14 +71,18 @@
 		<!-- + File names should follow PSR-4 autoloading standards -->
 		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+		<!-- @see WordPress.Files.FileName -->
 
 		<!-- + The Short Array syntax MUST be used. -->
 		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found" />
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax" />
+
+		<!-- + Classnames MUST NOT follow the default WordPress naming conventions and should -->
+		<exclude name="PEAR.NamingConventions.ValidClassName" />
+		<!-- @see Squiz.Classes.ValidClassName -->
 
 		<!-- Conflicts with PSR12.Files.FileHeader @parserIgnore -->
 		<exclude name="Squiz.Commenting.FileComment.SpacingAfterOpen" />
-
-		<exclude name="PEAR.NamingConventions.ValidClassName" />
 
 		<!--
 			Class property docblocks MUST NOT include an @var block unless it provides information
@@ -96,39 +104,7 @@
 		<exclude-pattern>tests/phpunit/**/*.php</exclude-pattern>
 	</rule>
 
-	<!-- 2.2. Files -->
-
-	<!-- 2.2.1. File names -->
-	<!-- PHP File names MUST adhere to the [PSR-4: Autoloader](https://www.php-fig.org/psr/psr-4/) standard. -->
-
-	<!-- 2.2.2. Start of file -->
-	<!--
-		The header of a PHP file may consist of a number of different blocks. If present, each of the blocks below MUST
-		be separated by a single blank line, and MUST NOT contain a blank line. Each block MUST be in the order listed
-		below, although blocks that are not relevant may be omitted.
-
-		+ Opening php tag.
-		+ File-level docblock.
-		+ One or more declare statements.
-		+ The namespace declaration of the file.
-		+ One or more class-based use import statements.
-		+ One or more function-based use import statements.
-		+ One or more constant-based use import statements.
-		+ The remainder of the code in the file.
-	-->
-	<rule ref="PSR12.Files.FileHeader" />
-
-	<!-- Use import statements SHOULD be alphabetically sorted and ordered by classes, functions, and constants. -->
-	<rule ref="SlevomatCodingStandard.Namespaces.AlphabeticallySortedUses" />
-
-	<!-- 2.2.3. End of file -->
-	<!-- All PHP files MUST end with a single blank line. -->
-	<!-- @see PSR2.Files.EndFileNewline -->
-
-	<!-- The closing `?>` tag MUST be omitted from files containing only PHP. -->
-	<!-- @see PSR2.Files.ClosingTag -->
-
-	<!-- 2.3. Lines -->
+	<!-- 2.2. Lines -->
 	<!--
 		There MUST NOT be a hard limit on line length.
 
@@ -159,11 +135,12 @@
 	<!-- There MUST NOT be more than one statement per line. -->
 	<!-- @see Generic.Formatting.DisallowMultipleStatements -->
 
-	<!-- 2.4. Indentation -->
-	<!-- @see https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/#whitespace -->
+	<!-- 2.3. Indentation -->
+	<!-- @link https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/#whitespace -->
 
 	<!-- Indentation should always reflect a logical structure. -->
 	<!-- @see Generic.WhiteSpace.ScopeIndent -->
+	<!-- @see WordPress.Arrays.ArrayIndentation -->
 
 	<!--
 		At the beginning of a line, PHP Code MUST use a **real tab** for indentation, and MUST NOT use spaces for
@@ -173,20 +150,15 @@
 	-->
 	<!-- @see Generic.WhiteSpace.DisallowSpaceIndent -->
 	<!-- @see WordPress.WhiteSpace.PrecisionAlignment -->
+	<!-- @see Universal.WhiteSpace.DisallowInlineTabs -->
 
-
-	<!-- 2.5. Character Encoding -->
-
-	<!-- PHP code MUST use only UTF-8 without BOM. -->
-	<!-- @see Generic.Files.ByteOrderMark -->
-
-	<!-- 2.6. PHP Tags -->
+	<!-- 2.4. PHP Tags -->
 
 	<!-- PHP code MUST use the long `<?php ?>` tags; it MUST NOT use the other tag variations. -->
 	<!-- @see Generic.PHP.DisallowAlternativePHPTags -->
 	<!-- @see Generic.PHP.DisallowShortOpenTag -->
 
-	<!-- 2.7. Keyword and Type Capitalization -->
+	<!-- 2.5. Keyword and Type Capitalization -->
 
 	<!-- PHP keywords and types MUST be in lower case. -->
 	<!-- @see Generic.PHP.LowerCaseKeyword -->
@@ -199,15 +171,62 @@
 	<!-- @see PSR12.Keywords.ShortFormTypeKeywords -->
 	<rule ref="SlevomatCodingStandard.TypeHints.LongTypeHints" />
 
-	<!-- 2.8. Side Effects -->
 
+	<!-- 3. Files -->
+
+	<!-- 3.1. File names -->
+	<!-- PHP File names MUST adhere to the [PSR-4: Autoloader](https://www.php-fig.org/psr/psr-4/) standard. -->
+
+	<!-- 3.2. Character Encoding -->
+
+	<!-- PHP code MUST use only UTF-8 without BOM. -->
+	<!-- @see Generic.Files.ByteOrderMark -->
+
+	<!-- 3.3. File Header -->
+	<!--
+		The header of a PHP file may consist of a number of different blocks. If present, each of the blocks below MUST
+		be separated by a single blank line, and MUST NOT contain a blank line. Each block MUST be in the order listed
+		below, although blocks that are not relevant may be omitted.
+
+		+ Opening php tag.
+		+ File-level docblock.
+		+ One or more declare statements.
+		+ The namespace declaration of the file.
+		+ One or more class-based use import statements.
+		+ One or more function-based use import statements.
+		+ One or more constant-based use import statements.
+		+ The remainder of the code in the file.
+	-->
+	<rule ref="PSR12.Files.FileHeader" />
+	<!-- @see PSR2.Namespaces.NamespaceDeclaration -->
+
+	<!-- Use import statements SHOULD be alphabetically sorted and ordered by classes, functions, and constants. -->
+	<rule ref="SlevomatCodingStandard.Namespaces.AlphabeticallySortedUses" />
+
+	<!-- 3.4. End of file -->
+	<!-- All PHP files MUST end with a single blank line. -->
+	<!-- @see PSR2.Files.EndFileNewline -->
+	<!-- @see Generic.Files.EndFileNewline -->
+
+	<!-- The closing `?>` tag MUST be omitted from files containing only PHP. -->
+	<!-- @see PSR2.Files.ClosingTag -->
+
+	<!-- 3.5. Side Effects -->
 	<!--
 		A file SHOULD declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it
 		SHOULD execute logic with side effects, but SHOULD NOT do both.
 	-->
 	<rule ref="PSR1.Files.SideEffects" />
 
-	<!-- 3. Strict Typing and Type Hints -->
+	<!-- 3.6. -->
+	<!--
+		A file containing an object structure (e.g. a class, trait, interface, etc...) MUST contain only one single
+		object structure.
+	-->
+	<!-- @see Generic.Files.OneObjectStructurePerFile -->
+
+
+	<!-- 4. Strict Typing and Type Hints -->
 
 	<!-- PHP files MUST use strict typing. -->
 	<rule ref="Generic.PHP.RequireStrictTypes" />
@@ -254,10 +273,10 @@
 	-->
 	<rule ref="PSR12.Functions.ReturnTypeDeclaration" />
 
-	<!-- 4. Classes, Properties, and Methods -->
 
-	<!-- 4.1 Namespace and Class Names -->
+	<!-- 5. Classes, Properties, and Methods -->
 
+	<!-- 5.1. Namespace and Class Names -->
 	<!--
 		Class names MUST be declared in PascalCase (or StudlyCaps), where where the first letter of each word is
 		capitalized including the very first letter.
@@ -270,8 +289,9 @@
 		Each class is in a file by itself, and is in a namespace of at least one level: a top-level vendor name.
 	-->
 	<rule ref="PSR1.Classes.ClassDeclaration" />
+	<!-- @see Generic.Classes.OpeningBraceSameLine -->
 
-	<!-- 4.2 Class Structure -->
+	<!-- 5.2. Class Structure -->
 	<!--
 		The Structure of a class MUST match the following structure of class member groups:
 
@@ -357,7 +377,7 @@
 		</properties>
 	</rule>
 
-	<!-- 4.3 Class Spacing -->
+	<!-- 5.3. Class Spacing -->
 	<!-- Class members, constants, properties, and methods MUST each be separated by a single empty line -->
 	<rule ref="SlevomatCodingStandard.Classes.ClassMemberSpacing">
 		<properties>
@@ -387,11 +407,11 @@
 		</properties>
 	</rule>
 
-	<!-- 4.4. Constants -->
+	<!-- 5.4. Constants -->
 	<!-- The visibility of class constants MUST be declared. -->
 	<rule ref="SlevomatCodingStandard.Classes.ClassConstantVisibility" />
 
-	<!-- 4.5. Properties -->
+	<!-- 5.5. Properties -->
 	<!--
 		Visibility MUST be declared on all properties.
 
@@ -403,7 +423,7 @@
 	-->
 	<!-- @see PSR2.Classes.PropertyDeclaration -->
 
-	<!-- 4.6. Methods -->
+	<!-- 5.6. Methods -->
 
 	<!-- The visibility of methods MUST be declared. -->
 	<!-- @see Squiz.Scope.MethodScope -->
@@ -416,32 +436,47 @@
 	<!-- @see WordPress.NamingConventions.ValidFunctionName -->
 
 
-	<!-- 5. Functions -->
+	<!-- 6. Functions -->
 
 
-	<!-- 6. Arrays -->
+	<!-- 7. Arrays -->
 
-	<!-- 6.1. Short Array Syntax -->
+	<!-- 7.1. Short Array Syntax -->
 	<!-- The short array syntax MUST be used, and the long array syntax MUST NOT be used. -->
 	<rule ref="Generic.Arrays.DisallowLongArraySyntax.Found">
 		<type>error</type>
 	</rule>
 
-	<!-- 6.2. Implicit Array Creation -->
+	<!-- 7.2. Implicit Array Creation -->
 	<!-- Arrays must be explicitly created before being assigned values. -->
 	<rule ref="SlevomatCodingStandard.Arrays.DisallowImplicitArrayCreation" />
 
-	<!-- 6.3. White Space and Indentation -->
+	<!-- 7.3. White Space and Indentation -->
 	<!-- When an associative array contains more than one item, each item array SHOULD start on a new line. -->
 	<!-- @see WordPress.Arrays.ArrayDeclarationSpacing -->
 
 	<!-- The assignment double-arrows in an associative array SHOULD be aligned using mid-line space indentation. -->
 	<!-- @see WordPress.Arrays.MultipleStatementAlignment -->
 
-
-	<!-- 6.4 Trailing Comma -->
+	<!-- 7.4. Trailing Comma -->
 	<!-- A trailing comma SHOULD be included after the last item in a multi-line array. -->
 	<!-- @see WordPress.Arrays.CommaAfterArrayItem -->
+
+
+	<!-- 8. Constants -->
+
+	<!-- Constants MUST be declared in all upper case with underscore separators. -->
+	<rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
+
+	<!-- 9. Operators -->
+
+	<!-- 9.1 Null Coalesce -->
+	<!-- The null coalesce `??` operator SHOULD be used in favor of a ternary whenever possible. -->
+	<rule ref="SlevomatCodingStandard.ControlStructures.RequireNullCoalesceOperator" />
+
+
+
+
 
 <!-- @parserIgnore Maybe add? <rule ref="PEAR.Functions.ValidDefaultValue"/> -->
 
@@ -460,8 +495,6 @@
 	<!--  -->
 
 
-	<!-- Constants MUST be declared in all upper case with underscore separators. -->
-	<rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
 
 
 
@@ -477,8 +510,8 @@
 
 
 
-	<!-- The null coalesce "??" operator should be used in favor of ternary whenvere possible. -->
-	<rule ref="SlevomatCodingStandard.ControlStructures.RequireNullCoalesceOperator" />
+
+
 
 	<!-- If a class or function is imported it MUST be used in the file. -->
 	<rule ref="SlevomatCodingStandard.Namespaces.UnusedUses" />
@@ -509,6 +542,52 @@
 			</property> -->
 		</properties>
 	</rule>
+
+
+
+	<!-- The following sniff don't need to be included in the public documentation. @parserIgnore -->
+	<!-- @see Generic.Classes.DuplicateClassName -->
+	<!-- @see Generic.CodeAnalysis.EmptyPHPStatement -->
+	<!-- @see Generic.CodeAnalysis.EmptyStatement -->
+	<!-- @see Generic.CodeAnalysis.ForLoopShouldBeWhileLoop -->
+	<!-- @see Generic.CodeAnalysis.ForLoopWithTestFunctionCall -->
+	<!-- @see Generic.CodeAnalysis.JumbledIncrementer -->
+	<!-- @see Generic.CodeAnalysis.UnconditionalIfStatement -->
+	<!-- @see Generic.CodeAnalysis.UnnecessaryFinalModifier -->
+	<!-- @see Generic.CodeAnalysis.UselessOverridingMethod -->
+	<!-- @see Generic.PHP.DeprecatedFunctions -->
+	<!-- @see Generic.PHP.DiscourageGoto -->
+	<!-- @see Generic.PHP.ForbiddenFunctions -->
+	<!-- @see Generic.PHP.Syntax -->
+	<!-- @see Generic.PHP.BacktickOperator -->
+	<!-- @see Squiz.PHP.Eval -->
+	<!-- @see Generic.VersionControl.GitMergeConflict -->
+	<!-- @see WordPress.DB.DirectDatabaseQuery -->
+	<!-- @see WordPress.DB.PreparedSQL -->
+	<!-- @see WordPress.DB.PreparedSQLPlaceholders -->
+	<!-- @see WordPress.DB.RestrictedClasses -->
+	<!-- @see WordPress.DB.RestrictedFunctions -->
+	<!-- @see WordPress.DB.SlowDBQuery -->
+	<!-- @see WordPress.WP.DeprecatedClasses -->
+	<!-- @see WordPress.WP.DeprecatedFunctions -->
+	<!-- @see WordPress.WP.DeprecatedParameterValues -->
+	<!-- @see WordPress.WP.DeprecatedParameters -->
+	<!-- @see WordPress.WP.DiscouragedConstants -->
+	<!-- @see WordPress.WP.DiscouragedFunctions -->
+	<!-- @see WordPress.PHP.DontExtract -->
+	<!-- @see WordPress.PHP.NoSilencedErrors -->
+	<!-- @see WordPress.PHP.POSIXFunctions -->
+	<!-- @see  -->
+	<!-- @see  -->
+	<!-- @see  -->
+	<!-- @see  -->
+	<!-- @see  -->
+	<!-- @see  -->
+	<!-- @see  -->
+	<!-- @see  -->
+	<!-- @see  -->
+	<!-- @see  -->
+	<!-- @see  -->
 
 
 

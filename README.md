@@ -70,3 +70,74 @@ Add to your `composer.json` file with the `@dev` tag and reference your local co
     }
 ]
 ```
+
+## Sniffs
+
+### LifterLMS.Commenting.FileComment
+
+Ensures that the configured tags are included in the file comment, in the correct order, and grouping.
+
+#### Properties
+
+##### groups
+
+The `groups` property is an array of tag groups.
+
+Each element in the array is a space-separated list of the required tags in the tag group. The sniff will validate that the tags are in the correct group and that the tags are in the correct order within the group.
+
+Each group must be separated by a single blank line.
+
+Example configuration:
+
+```xml
+  <rule ref="LifterLMS.Commenting.FileComment">
+    <properties>
+      <property name="groups" type="array">
+        <element value="@package" />
+        <element value="@since @version" />
+      </property>
+    </properties>
+  </rule>
+```
+
+Example valid header comment:
+
+```php
+/**
+ * Header short description
+ *
+ * @package Package\Name
+ *
+ * @since 1.2.3
+ * @version 4.5.6
+ */
+```
+
+##### allowExtraTags
+
+The `allowExtraTags` property is a `boolean` property which determines whether or not extra custom tags can be added to the file comment.
+
+When `true`, extra tags MUST be included in a separate tag group after the defined tag groups.
+
+```xml
+  <rule ref="LifterLMS.Commenting.FileComment">
+    <properties>
+      <property name="allowExtraTags" value="true" />
+    </properties>
+  </rule>
+```
+
+Example valid header comment:
+
+```php
+/**
+ * Header short description
+ *
+ * @package Package\Name
+ *
+ * @since 1.2.3
+ * @version 4.5.6
+ *
+ * @anExtraTag
+ */
+```

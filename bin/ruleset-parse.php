@@ -4,7 +4,11 @@ namespace LifterLMSCS\Bin;
 $ruleset = $argv[1] ?? null;
 
 if ( ! $ruleset ) {
-	echo "Usage {$argv[0]} <rulesetPath>" . PHP_EOL;
+	echo PHP_EOL;
+	echo "Usage: {$argv[0]} <rulesetPath>" . PHP_EOL;
+	echo PHP_EOL;
+	echo "<rulesetPath> Path to the ruleset.xml file to parse" . PHP_EOL;
+	echo PHP_EOL;
 	die( 0 );
 }
 
@@ -13,7 +17,7 @@ use XMLReader;
 const ROOT_DIR = __DIR__ . '/..';
 const START_TOKEN = '<!-- Parser-Start-Token -->';
 const NEWLINE = "\r";
-const CONTENTS_TOKEN = '{{TABLE_OF_CONTENTS}}';
+const CONTENTS_TOKEN = 'Table-of-Contents-Token';
 
 $start_token_found = false;
 $is_title_line     = false;
@@ -43,7 +47,13 @@ function format_line( $line, $add_new_line = true, &$toc = [] ) {
 			$before = NEWLINE;
 		}
 
-		$toc[ $header_matches[0] ] = trim( str_replace( $header_matches[0], '', $line ) );
+		$id    = str_replace(
+			[ '.', ' ' ],
+			[ '', '-' ],
+			strtolower( $line )
+		);
+		$link  = "+ [{$line}](#{$id})";
+		$toc[] = str_repeat( ' ', ( $level - 2 ) * 2 ) . trim( $link );
 
 		$line = $before . str_repeat( '#', $level ) . " {$line}" . NEWLINE;
 	} elseif ( $add_new_line ) {
@@ -70,7 +80,7 @@ while( $reader->read() ) {
 			continue;
 		} elseif ( ! $start_token_found ) {
 			continue;
-		} elseif ( false !== strpos( $line, '@parserIgnore' ) || false !== strpos( $line, '@see' ) ) {
+		} elseif ( false !== strpos( $line, '@parserIgnore' ) || false !== strpos( $line, '@see' ) || false !== strpos( $line, '@link' ) ) {
 			continue;
 		}
 
@@ -102,34 +112,14 @@ while( $reader->read() ) {
 			$time       = gmdate( 'Y-m-d\TH:i:s\Z', time() );
 			$standard[] = "<!-- These docs were automatically generated from the {$ruleset} file on {$time}. -->";
 			$standard[] = '';
-			$standard[] = '## Contents';
-			$standard[] = '';
-			$standard[] = CONTENTS_TOKEN;
-			$standard[] = '';
 		}
 	}
 }
 
 
-$contents = implode(
-	NEWLINE,
-	array_map(
-		function( $title, $key ) {
-			$id = str_replace(
-				[ '.', ' ' ],
-				[ '', '-' ],
-				strtolower( "{$key} {$title}" )
-			);
-			return "+ [{$key} {$title}](#{$id})";
-		},
-		$toc,
-		array_keys( $toc )
-	)
-);
-
 $body = str_replace(
 	CONTENTS_TOKEN,
-	$contents,
+	implode( NEWLINE, $toc ),
 	implode( NEWLINE, $standard )
 );
 

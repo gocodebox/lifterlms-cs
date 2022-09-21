@@ -174,7 +174,7 @@
 
 	<!-- 3. Files -->
 
-	<!-- 3.1. File names -->
+	<!-- 3.1. File Names -->
 	<!-- PHP File names MUST adhere to the [PSR-4: Autoloader](https://www.php-fig.org/psr/psr-4/) standard. -->
 
 	<!-- 3.2. Character Encoding -->
@@ -203,7 +203,46 @@
 	<!-- Use import statements SHOULD be alphabetically sorted and ordered by classes, functions, and constants. -->
 	<rule ref="SlevomatCodingStandard.Namespaces.AlphabeticallySortedUses" />
 
-	<!-- 3.4. End of file -->
+	<!-- 3.4. File Comment -->
+	<!--
+		The file comment MUST include a short description, an optional long description, an `@package` tag, and a
+		changelog tag group.
+
+		The changelog tag group MUST contain an `@since` tag which details the version when the file was
+		introduced and an `@version` tag detailing the current version of the file.
+
+		Each section of the file comment should be separated by a single line.
+
+		Example:
+		```php
+		/**
+		 * File short description
+		 *
+		 * An optional file long description.
+		 *
+		 * @package Vendor\Package
+		 *
+		 * @since 1.2.3
+		 * @version 4.5.6
+		 */
+		```
+
+		The file short description MUST start with a capital letter and MUST NOT end with a full-stop.
+
+		If included, the file long description MUST start with a capital letter and must end with a full-stop.
+
+		The `@package` tag SHOULD match the file's namespace.
+	-->
+	<rule ref="LifterLMS.Commenting.FileComment">
+		<properties>
+			<property name="groups" type="array">
+				<element value="@package" />
+				<element value="@since @version" />
+			</property>
+		</properties>
+	</rule>
+
+	<!-- 3.4. End of File -->
 	<!-- All PHP files MUST end with a single blank line. -->
 	<!-- @see PSR2.Files.EndFileNewline -->
 	<!-- @see Generic.Files.EndFileNewline -->
@@ -218,7 +257,7 @@
 	-->
 	<rule ref="PSR1.Files.SideEffects" />
 
-	<!-- 3.6. -->
+	<!-- 3.6. One Object Structure Per File -->
 	<!--
 		A file containing an object structure (e.g. a class, trait, interface, etc...) MUST contain only one single
 		object structure.
@@ -470,81 +509,27 @@
 
 	<!-- 9. Operators -->
 
-	<!-- 9.1 Null Coalesce -->
+	<!-- 9.1. Null Coalesce -->
 	<!-- The null coalesce `??` operator SHOULD be used in favor of a ternary whenever possible. -->
 	<rule ref="SlevomatCodingStandard.ControlStructures.RequireNullCoalesceOperator" />
 
 
+	<!-- 10. Best Practices and Code Quality -->
 
-
-
-<!-- @parserIgnore Maybe add? <rule ref="PEAR.Functions.ValidDefaultValue"/> -->
-
-
-	<!--  -->
-	<!--  -->
-	<!--  -->
-	<!--  -->
-	<!--  -->
-	<!--  -->
-	<!--  -->
-	<!--  -->
-	<!--  -->
-	<!--  -->
-	<!--  -->
-	<!--  -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	<!-- 10.1. Useless and Unused Code -->
 	<!-- If a class or function is imported it MUST be used in the file. -->
 	<rule ref="SlevomatCodingStandard.Namespaces.UnusedUses" />
-
-	<!-- Importing from the same namespace is prohibited. -->
-	<rule ref="SlevomatCodingStandard.Namespaces.UseFromSameNamespace" />
 
 	<!-- Parenthesis should only be used when necessary. -->
 	<rule ref="SlevomatCodingStandard.PHP.UselessParentheses" />
 
+	<!-- Importing from the same namespace is prohibited. -->
+	<rule ref="SlevomatCodingStandard.Namespaces.UseFromSameNamespace" />
 
 
 
-
-
-
-	<!-- <rule ref="Squiz.Commenting.ClassComment" /> -->
-	<rule ref="LifterLMS.Commenting.FileComment">
-		<properties>
-			<property name="groups" type="array">
-				<element value="@package" />
-				<element value="@since @version" />
-			</property>
-
-<!-- 			<property name="allowedTags" type="array">
-				<element value="@package" />
-				<element value="@since" />
-			</property> -->
-		</properties>
-	</rule>
-
-
-
+	<!-- @parserIgnore Maybe add? <rule ref="PEAR.Functions.ValidDefaultValue"/> -->
+	<!-- @parserIgnore <rule ref="Squiz.Commenting.ClassComment" /> -->
 	<!-- The following sniff don't need to be included in the public documentation. @parserIgnore -->
 	<!-- @see Generic.Classes.DuplicateClassName -->
 	<!-- @see Generic.CodeAnalysis.EmptyPHPStatement -->
@@ -577,18 +562,5 @@
 	<!-- @see WordPress.PHP.DontExtract -->
 	<!-- @see WordPress.PHP.NoSilencedErrors -->
 	<!-- @see WordPress.PHP.POSIXFunctions -->
-	<!-- @see  -->
-	<!-- @see  -->
-	<!-- @see  -->
-	<!-- @see  -->
-	<!-- @see  -->
-	<!-- @see  -->
-	<!-- @see  -->
-	<!-- @see  -->
-	<!-- @see  -->
-	<!-- @see  -->
-	<!-- @see  -->
-
-
 
 </ruleset>

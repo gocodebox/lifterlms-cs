@@ -120,7 +120,7 @@ $contents = implode(
 				[ '', '-' ],
 				strtolower( "{$key} {$title}" )
 			);
-			return "{$key} [{$title}](#{$id})" . NEWLINE;
+			return "+ {$key} [{$title}](#{$id})";
 		},
 		$toc,
 		array_keys( $toc )

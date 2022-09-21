@@ -13,14 +13,16 @@ use XMLReader;
 const ROOT_DIR = __DIR__ . '/..';
 const START_TOKEN = '<!-- Parser-Start-Token -->';
 const NEWLINE = "\r";
+const CONTENTS_TOKEN = '{{TABLE_OF_CONTENTS}}';
 
 $start_token_found = false;
 $is_title_line     = false;
 $is_in_list        = false;
 
 $standard = [];
+$toc      = [];
 
-function format_line( $line, $add_new_line = true ) {
+function format_line( $line, $add_new_line = true, &$toc = [] ) {
 
 	// Strip comment tags.
 	$line = str_replace(
@@ -34,14 +36,15 @@ function format_line( $line, $add_new_line = true ) {
 
 	// Add Markdown headers based on the list notation.
 	// 1. = #; 1.2 = ##; 1.2.3 = ###; etc...
-	if ( preg_match( '/^(\d{1,3}\.)(\d{1,3})?/', $line, $header_matches ) ) {
+	if ( preg_match( '/^(\d{1,3}\.)(\d{1,3}\.)?(\d{1,3}\.)?/', $line, $header_matches ) ) {
 		$level  = count( array_filter( explode( '.', $header_matches[0] ) ) ) + 1;
 		$before = '';
 		if ( 1 === $level ) {
 			$before = NEWLINE;
-		} elseif ( 2 >= $level ) {
-			// $before = NEWLINE;
 		}
+
+		$toc[ $header_matches[0] ] = trim( str_replace( $header_matches[0], '', $line ) );
+
 		$line = $before . str_repeat( '#', $level ) . " {$line}" . NEWLINE;
 	} elseif ( $add_new_line ) {
 		$line = $line . NEWLINE;
@@ -71,8 +74,7 @@ while( $reader->read() ) {
 			continue;
 		}
 
-
-		$line = format_line( $line, ! $is_title_line );
+		$line = format_line( $line, ! $is_title_line, $toc );
 
 		$first_char = substr( $line, 0, 1 );
 
@@ -93,8 +95,6 @@ while( $reader->read() ) {
 
 		$standard[] = $line;
 
-
-
 		if ( $is_title_line ) {
 			$is_title_line = false;
 			$standard[] = str_repeat( '=', strlen( $line ) );
@@ -102,12 +102,36 @@ while( $reader->read() ) {
 			$time       = gmdate( 'Y-m-d\TH:i:s\Z', time() );
 			$standard[] = "<!-- These docs were automatically generated from the {$ruleset} file on {$time}. -->";
 			$standard[] = '';
+			$standard[] = '## Contents';
+			$standard[] = '';
+			$standard[] = CONTENTS_TOKEN;
+			$standard[] = '';
 		}
-
-
 	}
 }
 
-$fh = fopen( ROOT_DIR . '/docs/php-modern-coding-standard.md', 'w' );
 
-fwrite( $fh, implode( "\r", $standard ) );
+$contents = implode(
+	NEWLINE,
+	array_map(
+		function( $title, $key ) {
+			$id = str_replace(
+				[ '.', ' ' ],
+				[ '', '-' ],
+				strtolower( "{$key} {$title}" )
+			);
+			return "{$key} [{$title}](#{$id})";
+		},
+		$toc,
+		array_keys( $toc )
+	)
+);
+
+$body = str_replace(
+	CONTENTS_TOKEN,
+	$contents,
+	implode( NEWLINE, $standard )
+);
+
+$fh = fopen( ROOT_DIR . '/docs/php-modern-coding-standard.md', 'w' );
+fwrite( $fh, $body );

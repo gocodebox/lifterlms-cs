@@ -5,9 +5,14 @@ LifterLMS "Modern" PHP Coding Standard
 
 ## Contents
 
-1. [Overview](#1-overview)
-2. [General](#2-general)
-   2.1. [Basic Coding Standard](#21-basic-coding-standard)
+<ol>
+  <li>[Overview](#1-overview)</li>
+  <li>[General](#2-general)
+    <ol>
+      <li>[Basic Coding Standard](#21-basic-coding-standard)</li>
+    </ol>
+  </li>
+</ol>
    2.2. [Files](#22-files)
      2.2.1. [File names](#221-file-names)
      2.2.2. [Start of file](#222-start-of-file)

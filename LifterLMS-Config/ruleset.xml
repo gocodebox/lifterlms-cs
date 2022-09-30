@@ -32,7 +32,4 @@
 	<exclude-pattern type="relative">vendor/*</exclude-pattern>
 	<exclude-pattern type="relative">node_modules/*</exclude-pattern>
 
-    <!-- Whenever possible, cache the scan results and re-use those for unchanged files on the next scan. -->
-	<arg name="cache" value="./../../../../tmp/phpcs.json"/>
-
 </ruleset>

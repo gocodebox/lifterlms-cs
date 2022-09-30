@@ -1,4 +1,4 @@
-LifterLMS "Modern" PHP Coding Standard======================================<!-- These docs were automatically generated from the LifterLMS-Modern/ruleset.xml file on 2022-09-21T19:35:52Z. -->+ [1. Overview](#1-overview)+ [2. General](#2-general)  + [2.1. Basic Coding Standard](#21-basic-coding-standard)  + [2.2. Lines](#22-lines)  + [2.3. Indentation](#23-indentation)  + [2.4. PHP Tags](#24-php-tags)  + [2.5. Keyword and Type Capitalization](#25-keyword-and-type-capitalization)+ [3. Files](#3-files)  + [3.1. File Names](#31-file-names)  + [3.2. Character Encoding](#32-character-encoding)  + [3.3. File Header](#33-file-header)  + [3.4. File Comment](#34-file-comment)  + [3.4. End of File](#34-end-of-file)  + [3.5. Side Effects](#35-side-effects)  + [3.6. One Object Structure Per File](#36-one-object-structure-per-file)+ [4. Strict Typing and Type Hints](#4-strict-typing-and-type-hints)+ [5. Classes, Properties, and Methods](#5-classes,-properties,-and-methods)  + [5.1. Namespace and Class Names](#51-namespace-and-class-names)  + [5.2. Class Structure](#52-class-structure)  + [5.3. Class Spacing](#53-class-spacing)  + [5.4. Constants](#54-constants)  + [5.5. Properties](#55-properties)  + [5.6. Methods](#56-methods)+ [6. Functions](#6-functions)+ [7. Arrays](#7-arrays)  + [7.1. Short Array Syntax](#71-short-array-syntax)  + [7.2. Implicit Array Creation](#72-implicit-array-creation)  + [7.3. White Space and Indentation](#73-white-space-and-indentation)  + [7.4. Trailing Comma](#74-trailing-comma)+ [8. Constants](#8-constants)+ [9. Operators](#9-operators)  + [9.1. Null Coalesce](#91-null-coalesce)+ [10. Best Practices and Code Quality](#10-best-practices-and-code-quality)  + [10.1. Useless and Unused Code](#101-useless-and-unused-code)## 1. OverviewStandard Name: `LifterLMS-Modern`
+LifterLMS "Modern" PHP Coding Standard======================================<!-- These docs were automatically generated from the LifterLMS-Modern/ruleset.xml file on 2022-09-30T21:06:35Z. -->+ [1. Overview](#1-overview)+ [2. General](#2-general)  + [2.1. Basic Coding Standard](#21-basic-coding-standard)  + [2.2. Lines](#22-lines)  + [2.3. Indentation](#23-indentation)  + [2.4. PHP Tags](#24-php-tags)  + [2.5. Keyword and Type Capitalization](#25-keyword-and-type-capitalization)+ [3. Files](#3-files)  + [3.1. File Names](#31-file-names)  + [3.2. Character Encoding](#32-character-encoding)  + [3.3. File Header](#33-file-header)  + [3.4. File Comment](#34-file-comment)  + [3.4. End of File](#34-end-of-file)  + [3.5. Side Effects](#35-side-effects)  + [3.6. One Object Structure Per File](#36-one-object-structure-per-file)+ [4. Strict Typing and Type Hints](#4-strict-typing-and-type-hints)+ [5. Classes, Properties, and Methods](#5-classes,-properties,-and-methods)  + [5.1. Namespace and Class Names](#51-namespace-and-class-names)  + [5.2. Class Comment](#52-class-comment)  + [5.3. Class Structure](#53-class-structure)  + [5.4. Class Spacing](#54-class-spacing)  + [5.5. Constants](#55-constants)  + [5.6. Properties](#56-properties)  + [5.7. Methods](#57-methods)+ [6. Functions](#6-functions)+ [7. Arrays](#7-arrays)  + [7.1. Short Array Syntax](#71-short-array-syntax)  + [7.2. Implicit Array Creation](#72-implicit-array-creation)  + [7.3. White Space and Indentation](#73-white-space-and-indentation)  + [7.4. Trailing Comma](#74-trailing-comma)+ [8. Constants](#8-constants)+ [9. Operators](#9-operators)  + [9.1. Null Coalesce](#91-null-coalesce)+ [10. Best Practices and Code Quality](#10-best-practices-and-code-quality)  + [10.1. Useless and Unused Code](#101-useless-and-unused-code)## 1. OverviewStandard Name: `LifterLMS-Modern`
 
 PHPCS Ruleset File: [ruleset.xml](https://github.com/gocodebox/lifterlms-cs/LifterLMS-Modern/ruleset.xml)
 
@@ -71,7 +71,35 @@ declaration. The colon and declaration MUST be on the same line as the argument 
 no spaces between the two characters.## 5. Classes, Properties, and Methods### 5.1. Namespace and Class NamesClass names MUST be declared in PascalCase (or StudlyCaps), where where the first letter of each word is
 capitalized including the very first letter.Namespaces and classes MUST follow PSR-0.
 
-Each class is in a file by itself, and is in a namespace of at least one level: a top-level vendor name.### 5.2. Class StructureThe Structure of a class MUST match the following structure of class member groups:
+Each class is in a file by itself, and is in a namespace of at least one level: a top-level vendor name.### 5.2. Class CommentThe class comment MUST include a class summary, an optional description, and a changelog tag group.
+
+The changelog tag group MUST contain at least one `@since` tag which details the version when the class was
+introduced. A description of the introduction MUST NOT be included.
+
+Additional `@since` tags may be added to the group to record the removal of public or protected
+class members which have been removed from the class. A short description of the change MUST be recorded.
+
+A single `@deprecated` tag MUST be added to the changelog section when the class is marked as deprecated. A
+description of the deprecation SHOULD be included.
+
+Each section of the class comment MUST be separated by a single line.
+
+Example:
+```php
+/**
+ * Class summary.
+ *
+ * An optional class description.
+ *
+ * @since 1.2.3
+ * @since 4.5.6 A short change description.
+ * @deprecated 7.8.9 A short description of the deprecation.
+ */
+```
+
+The class short description MUST start with a capital letter and MUST end with a full-stop.
+
+If included, the file long description MUST start with a capital letter and must end with a full-stop.### 5.3. Class StructureThe Structure of a class MUST match the following structure of class member groups:
 
 1. Use import statements
 2. Enum cases
@@ -89,10 +117,10 @@ Each class is in a file by itself, and is in a namespace of at least one level: 
   6h. Static methods: private, protected, public
   6i. Methods: private, protected, public
 
-Items within each group SHOULD be alphabetized by member name.### 5.3. Class SpacingClass members, constants, properties, and methods MUST each be separated by a single empty line### 5.4. ConstantsThe visibility of class constants MUST be declared.### 5.5. PropertiesVisibility MUST be declared on all properties.
+Items within each group SHOULD be alphabetized by member name.### 5.4. Class SpacingClass members, constants, properties, and methods MUST each be separated by a single empty line### 5.5. ConstantsThe visibility of class constants MUST be declared.### 5.6. PropertiesVisibility MUST be declared on all properties.
 
 The var keyword MUST NOT be used to declare a property.
 
 There MUST NOT be more than one property declared per statement.
 
-Property names SHOULD NOT be prefixed with a single underscore to indicate protected or private visibility.### 5.6. MethodsThe visibility of methods MUST be declared.Method names SHOULD NOT be prefixed with a single underscore to indicate protected or private visibility.Method names MUST use lowercase letters separated by underscores and MUST NOT use camelCase.## 6. Functions## 7. Arrays### 7.1. Short Array SyntaxThe short array syntax MUST be used, and the long array syntax MUST NOT be used.### 7.2. Implicit Array CreationArrays must be explicitly created before being assigned values.### 7.3. White Space and IndentationWhen an associative array contains more than one item, each item array SHOULD start on a new line.The assignment double-arrows in an associative array SHOULD be aligned using mid-line space indentation.### 7.4. Trailing CommaA trailing comma SHOULD be included after the last item in a multi-line array.## 8. ConstantsConstants MUST be declared in all upper case with underscore separators.## 9. Operators### 9.1. Null CoalesceThe null coalesce `??` operator SHOULD be used in favor of a ternary whenever possible.## 10. Best Practices and Code Quality### 10.1. Useless and Unused CodeIf a class or function is imported it MUST be used in the file.Parenthesis should only be used when necessary.Importing from the same namespace is prohibited.
+Property names SHOULD NOT be prefixed with a single underscore to indicate protected or private visibility.### 5.7. MethodsThe visibility of methods MUST be declared.Method names SHOULD NOT be prefixed with a single underscore to indicate protected or private visibility.Method names MUST use lowercase letters separated by underscores and MUST NOT use camelCase.## 6. Functions## 7. Arrays### 7.1. Short Array SyntaxThe short array syntax MUST be used, and the long array syntax MUST NOT be used.### 7.2. Implicit Array CreationArrays must be explicitly created before being assigned values.### 7.3. White Space and IndentationWhen an associative array contains more than one item, each item array SHOULD start on a new line.The assignment double-arrows in an associative array SHOULD be aligned using mid-line space indentation.### 7.4. Trailing CommaA trailing comma SHOULD be included after the last item in a multi-line array.## 8. ConstantsConstants MUST be declared in all upper case with underscore separators.## 9. Operators### 9.1. Null CoalesceThe null coalesce `??` operator SHOULD be used in favor of a ternary whenever possible.## 10. Best Practices and Code Quality### 10.1. Useless and Unused CodeIf a class or function is imported it MUST be used in the file.Parenthesis should only be used when necessary.Importing from the same namespace is prohibited.

@@ -1,7 +1,7 @@
 LifterLMS "Modern" PHP Coding Standard
 ======================================
 
-<!-- These docs were automatically generated from the LifterLMS-Modern/ruleset.xml file on 2022-09-21T19:35:52Z. -->
+<!-- These docs were automatically generated from the LifterLMS-Modern/ruleset.xml file on 2022-09-30T21:06:35Z. -->
 
 + [1. Overview](#1-overview)
 + [2. General](#2-general)
@@ -21,11 +21,12 @@ LifterLMS "Modern" PHP Coding Standard
 + [4. Strict Typing and Type Hints](#4-strict-typing-and-type-hints)
 + [5. Classes, Properties, and Methods](#5-classes,-properties,-and-methods)
   + [5.1. Namespace and Class Names](#51-namespace-and-class-names)
-  + [5.2. Class Structure](#52-class-structure)
-  + [5.3. Class Spacing](#53-class-spacing)
-  + [5.4. Constants](#54-constants)
-  + [5.5. Properties](#55-properties)
-  + [5.6. Methods](#56-methods)
+  + [5.2. Class Comment](#52-class-comment)
+  + [5.3. Class Structure](#53-class-structure)
+  + [5.4. Class Spacing](#54-class-spacing)
+  + [5.5. Constants](#55-constants)
+  + [5.6. Properties](#56-properties)
+  + [5.7. Methods](#57-methods)
 + [6. Functions](#6-functions)
 + [7. Arrays](#7-arrays)
   + [7.1. Short Array Syntax](#71-short-array-syntax)
@@ -222,16 +223,41 @@ no spaces between the two characters.
 
 ## 4. Classes, Properties, and Methods
 
-## 4.1 Namespace and Class Names
-
-Class names MUST be declared in PascalCase (or StudlyCaps), where where the first letter of each word is
-capitalized including the very first letter.
-
-Namespaces and classes MUST follow PSR-0.
-
 Each class is in a file by itself, and is in a namespace of at least one level: a top-level vendor name.
 
-## 4.2 Class Structure
+### 5.2. Class Comment
+
+The class comment MUST include a class summary, an optional description, and a changelog tag group.
+
+The changelog tag group MUST contain at least one `@since` tag which details the version when the class was
+introduced. A description of the introduction MUST NOT be included.
+
+Additional `@since` tags may be added to the group to record the removal of public or protected
+class members which have been removed from the class. A short description of the change MUST be recorded.
+
+A single `@deprecated` tag MUST be added to the changelog section when the class is marked as deprecated. A
+description of the deprecation SHOULD be included.
+
+Each section of the class comment MUST be separated by a single line.
+
+Example:
+```php
+/**
+ * Class summary.
+ *
+ * An optional class description.
+ *
+ * @since 1.2.3
+ * @since 4.5.6 A short change description.
+ * @deprecated 7.8.9 A short description of the deprecation.
+ */
+```
+
+The class short description MUST start with a capital letter and MUST end with a full-stop.
+
+If included, the file long description MUST start with a capital letter and must end with a full-stop.
+
+### 5.3. Class Structure
 
 The Structure of a class MUST match the following structure of class member groups:
 
@@ -253,15 +279,15 @@ The Structure of a class MUST match the following structure of class member grou
 
 Items within each group SHOULD be alphabetized by member name.
 
-## 4.3 Class Spacing
+### 5.4. Class Spacing
 
 Class members, constants, properties, and methods MUST each be separated by a single empty line
 
-### 4.4. Constants
+### 5.5. Constants
 
 The visibility of class constants MUST be declared.
 
-### 4.5. Properties
+### 5.6. Properties
 
 Visibility MUST be declared on all properties.
 
@@ -271,7 +297,7 @@ There MUST NOT be more than one property declared per statement.
 
 Property names SHOULD NOT be prefixed with a single underscore to indicate protected or private visibility.
 
-### 5.6. Methods
+### 5.7. Methods
 
 The visibility of methods MUST be declared.
 

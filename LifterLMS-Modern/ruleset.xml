@@ -3,33 +3,6 @@
 
 	<description>LifterLMS "Modern" PHP Coding Standards</description>
 
-	<!-- Default quality of life configurations -->
-
-	<!-- Only evaluate PHP files. -->
-	<arg name="extensions" value="php" />
-
-	<!-- Show Progress -->
-	<arg value="sp" />
-
-	<!-- Set the memory limit to 256M.
-		 For most standard PHP configurations, this means the memory limit will temporarily be raised.
-		 Ref: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Advanced-Usage#specifying-phpini-settings
-	-->
-	<ini name="memory_limit" value="256M" />
-
-	<!-- Check up to 20 files simultaneously. -->
-	<!-- <arg name="parallel" value="20" /> -->
-
-	<!-- Show sniff codes in all reports. -->
-	<arg value="ps" />
-
-	<!-- Exclude directories -->
-	<exclude-pattern type="relative">.github/*</exclude-pattern>
-	<exclude-pattern type="relative">docs/*</exclude-pattern>
-	<exclude-pattern type="relative">tmp/*</exclude-pattern>
-	<exclude-pattern type="relative">vendor/*</exclude-pattern>
-	<exclude-pattern type="relative">node_modules/*</exclude-pattern>
-
 	<!-- Parser-Start-Token -->
 
 	<!-- LifterLMS "Modern" PHP Coding Standard -->
@@ -370,7 +343,7 @@
 		</properties>
 	</rule>
 
-	<!-- 5.2. Class Structure -->
+	<!-- 5.3. Class Structure -->
 	<!--
 		The Structure of a class MUST match the following structure of class member groups:
 
@@ -456,7 +429,7 @@
 		</properties>
 	</rule>
 
-	<!-- 5.3. Class Spacing -->
+	<!-- 5.4. Class Spacing -->
 	<!-- Class members, constants, properties, and methods MUST each be separated by a single empty line -->
 	<rule ref="SlevomatCodingStandard.Classes.ClassMemberSpacing">
 		<properties>
@@ -486,11 +459,11 @@
 		</properties>
 	</rule>
 
-	<!-- 5.4. Constants -->
+	<!-- 5.5. Constants -->
 	<!-- The visibility of class constants MUST be declared. -->
 	<rule ref="SlevomatCodingStandard.Classes.ClassConstantVisibility" />
 
-	<!-- 5.5. Properties -->
+	<!-- 5.6. Properties -->
 	<!--
 		Visibility MUST be declared on all properties.
 
@@ -502,7 +475,7 @@
 	-->
 	<!-- @see PSR2.Classes.PropertyDeclaration -->
 
-	<!-- 5.6. Methods -->
+	<!-- 5.7. Methods -->
 
 	<!-- The visibility of methods MUST be declared. -->
 	<!-- @see Squiz.Scope.MethodScope -->

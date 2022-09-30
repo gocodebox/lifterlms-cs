@@ -1,4 +1,5 @@
 <?php
+
 namespace LifterLMSCS\Bin;
 
 $standard = $argv[1] ?? null;
@@ -7,7 +8,7 @@ if ( ! $standard ) {
 	echo PHP_EOL;
 	echo "Usage: {$argv[0]} <standard>" . PHP_EOL;
 	echo PHP_EOL;
-	echo "<standard> Standard to check" . PHP_EOL;
+	echo '<standard> Standard to check' . PHP_EOL;
 	echo PHP_EOL;
 	die( 0 );
 }
@@ -27,13 +28,13 @@ $reader->open( ROOT_DIR . "/{$standard}/ruleset.xml" );
 
 $documented_sniffs = [];
 
-while( $reader->read() ) {
+while ( $reader->read() ) {
 
 	$sniff = null;
 	if ( XMLReader::COMMENT === $reader->nodeType ) {
 		$line = str_replace(
 			[ '<!--', '-->' ],
-			[ '', '', ],
+			[ '', '' ],
 			$reader->readOuterXml()
 		);
 		$line = trim( $line );
@@ -41,7 +42,7 @@ while( $reader->read() ) {
 			continue;
 		}
 		$sniff = trim( str_replace( '@see', '', $line ) );
-	} elseif ( XMLReader::ELEMENT ===  $reader->nodeType ) {
+	} elseif ( XMLReader::ELEMENT === $reader->nodeType ) {
 		$node = $reader->expand();
 		if ( 'rule' === $node->nodeName ) {
 			$sniff = $node->attributes->getNamedItem( 'ref' )->value;
@@ -53,12 +54,11 @@ while( $reader->read() ) {
 	if ( $sniff ) {
 		$documented_sniffs[] = $sniff;
 	}
-
 }
 
 
 // Parse the explanation into an array.
-if ( ! defined('PHP_CODESNIFFER_CBF' ) ) {
+if ( ! defined( 'PHP_CODESNIFFER_CBF' ) ) {
 	define( 'PHP_CODESNIFFER_CBF', false );
 }
 
@@ -66,11 +66,11 @@ if ( ! defined( 'PHP_CODESNIFFER_VERBOSITY' ) ) {
 	define( 'PHP_CODESNIFFER_VERBOSITY', 0 );
 }
 
-$runner = new Runner();
+$runner         = new Runner();
 $runner->config = new Config( [ "--standard={$standard}" ] );
 $runner->init();
 
-$config = new Config();
+$config            = new Config();
 $config->standards = [ $standard ];
 
 $ruleset = new Ruleset( $config );
@@ -99,12 +99,12 @@ sort( $loaded_sniffs );
 // var_dump( $documented_sniffs );
 // var_dump( $loaded_sniffs );
 
-$missing = array_diff( $loaded_sniffs, $documented_sniffs );
+$missing     = array_diff( $loaded_sniffs, $documented_sniffs );
 $num_missing = count( $missing );
 
 if ( 0 === $num_missing ) {
 	echo PHP_EOL;
-	echo "No missing sniffs!" . PHP_EOL;
+	echo 'No missing sniffs!' . PHP_EOL;
 	echo PHP_EOL;
 	exit( 0 );
 }

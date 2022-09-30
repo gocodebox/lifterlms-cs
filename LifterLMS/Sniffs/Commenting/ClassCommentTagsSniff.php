@@ -4,7 +4,7 @@
  * ClassCommentTagsSniff class file.
  *
  * @package LifterLMSCS\LifterLMS\Sniffs\Commenting
- * 
+ *
  * @since [version]
  * @version [version]
  */
@@ -13,7 +13,6 @@ declare( strict_types=1 );
 
 namespace LifterLMSCS\LifterLMS\Sniffs\Commenting;
 
-use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Util\Tokens;
 
@@ -33,7 +32,7 @@ class ClassCommentTagsSniff extends AbstractCommentTags {
 		'*@since... @deprecated',
 	];
 
-   /**
+	/**
 	 * Returns an array of tokens this test wants to listen for.
 	 *
 	 * @since [version]
@@ -55,16 +54,15 @@ class ClassCommentTagsSniff extends AbstractCommentTags {
 	 * @param \PHP_CodeSniffer\Files\File $phpcs_file The file being scanned.
 	 * @param int                         $stack_ptr  The position of the current token
 	 *                                                in the stack passed in $tokens.
-	 * @return void
 	 */
-	public function process( File $phpcs_file, $stack_ptr ): void {
+	public function process( File $phpcs_file, int $stack_ptr ): void {
 
-		$tokens = $phpcs_file->getTokens();
-		$find   = Tokens::$methodPrefixes;
+		$tokens               = $phpcs_file->getTokens();
+		$find                 = Tokens::$methodPrefixes;
 		$find[ T_WHITESPACE ] = T_WHITESPACE;
 
 		$prev_content = null;
-		for ( $comment_end = ( $stack_ptr - 1 ); $comment_end >= 0; $comment_end-- ) {
+		for ( $comment_end = $stack_ptr - 1; $comment_end >= 0; $comment_end-- ) {
 
 			if ( isset( $find[ $tokens[ $comment_end ]['code'] ] ) ) {
 				continue;

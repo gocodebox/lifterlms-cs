@@ -23,25 +23,32 @@ use PHP_CodeSniffer\Runner;
  */
 abstract class TestCase extends \SlevomatCodingStandard\Sniffs\TestCase {
 
+	private static function getSniffNameWithoutPrefix(): string {
+		$reflector = new \ReflectionClass( static::class );
+		$method    = $reflector->getMethod( 'getSniffName' );
+		$method->setAccessible( true );
+		$name = $method->invoke( null );
+		return str_replace( 'LifterLMSCS.', '', $name );
+	}
+
 	/**
 	 * Runs PHPCS against the provided file.
 	 *
 	 * @param array    $sniffProperties Sniff property customizations.
 	 * @param string[] $codesToCheck    Only check the specified error codes.
 	 * @param string[] $cliArgs         CLI Args to pass to PHPCS.
-	 * @return File
 	 */
 	protected static function checkFile( string $filePath, array $sniffProperties = [], array $codesToCheck = [], array $cliArgs = [] ): File {
 
-		if (defined('PHP_CODESNIFFER_CBF') === false) {
-			define('PHP_CODESNIFFER_CBF', false);
+		if ( defined( 'PHP_CODESNIFFER_CBF' ) === false ) {
+			define( 'PHP_CODESNIFFER_CBF', false );
 		}
-		$codeSniffer = new Runner();
-		$codeSniffer->config = new Config(array_merge(['-s'], $cliArgs));
+		$codeSniffer         = new Runner();
+		$codeSniffer->config = new Config( array_merge( [ '-s' ], $cliArgs ) );
 		$codeSniffer->init();
 
-		if (count($sniffProperties) > 0) {
-			$codeSniffer->ruleset->ruleset[self::getSniffNameWithoutPrefix()]['properties'] = $sniffProperties;
+		if ( count( $sniffProperties ) > 0 ) {
+			$codeSniffer->ruleset->ruleset[ self::getSniffNameWithoutPrefix() ]['properties'] = $sniffProperties;
 		}
 
 		$reflector         = new \ReflectionClass( static::class );
@@ -53,21 +60,21 @@ abstract class TestCase extends \SlevomatCodingStandard\Sniffs\TestCase {
 		/** @var Sniff $sniff */
 		$sniff = new $sniffClassName();
 
-		$codeSniffer->ruleset->sniffs = [$sniffClassName => $sniff];
+		$codeSniffer->ruleset->sniffs = [ $sniffClassName => $sniff ];
 
-		if (count($codesToCheck) > 0) {
-			foreach (self::getSniffClassReflection()->getConstants() as $constantName => $constantValue) {
-				if (strpos($constantName, 'CODE_') !== 0 || in_array($constantValue, $codesToCheck, true)) {
+		if ( count( $codesToCheck ) > 0 ) {
+			foreach ( self::getSniffClassReflection()->getConstants() as $constantName => $constantValue ) {
+				if ( strpos( $constantName, 'CODE_' ) !== 0 || in_array( $constantValue, $codesToCheck, true ) ) {
 					continue;
 				}
 
-				$codeSniffer->ruleset->ruleset[sprintf('%s.%s', self::getSniffNameWithoutPrefix(), $constantValue)]['severity'] = 0;
+				$codeSniffer->ruleset->ruleset[ sprintf( '%s.%s', self::getSniffNameWithoutPrefix(), $constantValue ) ]['severity'] = 0;
 			}
 		}
 
 		$codeSniffer->ruleset->populateTokenListeners();
 
-		$file = new LocalFile($filePath, $codeSniffer->ruleset, $codeSniffer->config);
+		$file = new LocalFile( $filePath, $codeSniffer->ruleset, $codeSniffer->config );
 		$file->process();
 
 		return $file;
@@ -81,7 +88,6 @@ abstract class TestCase extends \SlevomatCodingStandard\Sniffs\TestCase {
 	 * @param array    $sniffProperties Sniff property customizations.
 	 * @param string[] $codesToCheck    Only check the specified error codes.
 	 * @param string[] $cliArgs         CLI Args to pass to PHPCS.
-	 * @return File
 	 */
 	protected static function checkFileForTest( string $method, string $testDirPath, array $sniffProperties = [], array $codesToCheck = [], array $cliArgs = [] ): File {
 
@@ -100,14 +106,6 @@ abstract class TestCase extends \SlevomatCodingStandard\Sniffs\TestCase {
 		}
 
 		return self::checkFile( $filePath, $sniffProperties, $codesToCheck, $cliArgs );
-	}
-
-	private static function getSniffNameWithoutPrefix(): string {
-		$reflector = new \ReflectionClass( static::class );
-		$method    = $reflector->getMethod( 'getSniffName' );
-		$method->setAccessible( true );
-		$name = $method->invoke( null );
-		return str_replace( 'LifterLMSCS.', '', $name );
 	}
 
 	protected static function assertSniffError( File $phpcsFile, int $line, string $code, ?string $message = null ): void {

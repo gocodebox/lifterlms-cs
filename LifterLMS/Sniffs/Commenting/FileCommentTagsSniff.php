@@ -1,4 +1,5 @@
 <?php
+
 namespace LifterLMSCS\LifterLMS\Sniffs\Commenting;
 
 use PHP_CodeSniffer\Files\File;
@@ -38,26 +39,26 @@ class FileCommentTagsSniff extends AbstractCommentTags {
 	 *                                                in the stack passed in $tokens.
 	 * @return int Stack pointer to skip the rest of the file.
 	 */
-	public function process( File $phpcs_file, $stack_ptr ): int {
+	public function process( File $phpcs_file, int $stack_ptr ): int {
 
 		$tokens        = $phpcs_file->getTokens();
-		$comment_start = $phpcs_file->findNext( T_WHITESPACE,  ($stack_ptr + 1 ), null, true );
+		$comment_start = $phpcs_file->findNext( T_WHITESPACE, $stack_ptr + 1, null, true );
 
 		// Don't process an unfinished file comment during live coding.
 		if (
-			isset( $tokens[ $comment_start ]['comment_closer']) === false ||
+			isset( $tokens[ $comment_start ]['comment_closer'] ) === false ||
 			(
-				$tokens[ $tokens[ $comment_start ]['comment_closer']]['content'] === '' &&
-				$tokens[ $comment_start ]['comment_closer'] === ( $phpcs_file->numTokens - 1 )
+				$tokens[ $tokens[ $comment_start ]['comment_closer'] ]['content'] === '' &&
+				$tokens[ $comment_start ]['comment_closer'] === $phpcs_file->numTokens - 1
 			)
 		) {
-			return ( $phpcs_file->numTokens + 1 );
+			return $phpcs_file->numTokens + 1;
 		}
 
 		$this->process_tag_group( $phpcs_file, $comment_start );
 
 		// Ignore the rest of the file.
-		return ( $phpcs_file->numTokens + 1 );
+		return $phpcs_file->numTokens + 1;
 
 	}
 }

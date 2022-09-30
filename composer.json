@@ -13,6 +13,7 @@
   "require": {
     "php": ">=7.4",
     "wp-coding-standards/wpcs": "dev-develop || ^2.3.0",
+    "phpcsstandards/phpcsextra": "^1.0",
     "phpcompatibility/phpcompatibility-wp": "^2.0.0",
     "slevomat/coding-standard": "^8.4",
     "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2"

@@ -28,7 +28,7 @@ class FileCommentTagsSniffTest extends TestCase {
 	 * @since [version]
 	 */
 	public function test_allowed_extra_tags(): void {
-		$report = self::checkFileForTest( __METHOD__, __DIR__, [ 'allowExtraTags' => true ] );
+		$report = self::checkFileForTest( __METHOD__, __DIR__, [ 'allow_extra_tags' => true ] );
 		self::assertNoSniffErrorInFile( $report );
 	}
 
@@ -160,7 +160,7 @@ class FileCommentTagsSniffTest extends TestCase {
 					'@optionalTag @alsoOptionalTag',
 					'*@since',
 				],
-				'allowExtraTags' => true,
+				'allow_extra_tags' => true,
 			]
 		);
 		self::assertNoSniffErrorInFile( $report );

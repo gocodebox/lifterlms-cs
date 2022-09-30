@@ -123,16 +123,16 @@ When defining a group of tags, a shorthand notation can be used to define variou
 If a tag is marked as both required and listable, only the first occurrence of the tag is required, all subsequent occurrences are always optional.
 
 
-##### allowExtraTags
+##### allow_extra_tags
 
-The `allowExtraTags` property is a `boolean` property which determines whether or not extra custom tags can be added to the file comment.
+The `allow_extra_tags` property is a `boolean` property which determines whether or not extra custom tags can be added to the file comment.
 
 When `true`, extra tags MUST be included in a separate tag group after the defined tag groups.
 
 ```xml
   <rule ref="LifterLMS.Commenting.FileComment">
     <properties>
-      <property name="allowExtraTags" value="true" />
+      <property name="allow_extra_tags" value="true" />
     </properties>
   </rule>
 ```

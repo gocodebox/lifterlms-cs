@@ -93,8 +93,8 @@ Example configuration:
   <rule ref="LifterLMS.Commenting.FileComment">
     <properties>
       <property name="groups" type="array">
-        <element value="@package" />
-        <element value="@since @version" />
+        <element value="*@package" />
+        <element value="*@since *@version" />
       </property>
     </properties>
   </rule>
@@ -112,6 +112,16 @@ Example valid header comment:
  * @version 4.5.6
  */
 ```
+
+##### Group Tag Notation
+
+When defining a group of tags, a shorthand notation can be used to define various tag options.
+
++ **REQUIRED TAG**: To denote a tag is *required*, prepend the `*` character to the tag, eg: `*@since`. By default, tags are optional unless explicitly defined as required.
++ **LISTABLE TAG**: A list tag is a tag that can be used multiple times. Append `...` to the tag to make the tag listable, eg: `@since...`. By default, tags may only be used once per comment unless explicitly defined as listable.
+
+If a tag is marked as both required and listable, only the first occurrence of the tag is required, all subsequent occurrences are always optional.
+
 
 ##### allowExtraTags
 

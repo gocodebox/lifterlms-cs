@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="LifterLMS-Config" namespace="LifterLMS-CS\LifterLMS" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xsd">
+
+	<!--
+		This file is meant to be used alongside other rulesets as it does include any sniffs of its own.
+		Instead it configures PHPCS with an opinionated set of defaults as desired for LifterLMS projects.
+	-->
+	<description>LifterLMS default PHPCS Configuration File</description>
+
+	<!-- Only evaluate PHP files. -->
+	<arg name="extensions" value="php" />
+
+	<!-- Show Progress -->
+	<arg value="sp" />
+
+	<!-- Set the memory limit to 256M.
+		 For most standard PHP configurations, this means the memory limit will temporarily be raised.
+		 Ref: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Advanced-Usage#specifying-phpini-settings
+	-->
+	<ini name="memory_limit" value="256M" />
+
+	<!-- Check up to 20 files simultaneously. -->
+	<arg name="parallel" value="20" />
+
+	<!-- Show sniff codes in all reports. -->
+	<arg value="ps" />
+
+	<!-- Exclude directories -->
+	<exclude-pattern type="relative">.github/*</exclude-pattern>
+	<exclude-pattern type="relative">docs/*</exclude-pattern>
+	<exclude-pattern type="relative">tmp/*</exclude-pattern>
+	<exclude-pattern type="relative">vendor/*</exclude-pattern>
+	<exclude-pattern type="relative">node_modules/*</exclude-pattern>
+
+    <!-- Whenever possible, cache the scan results and re-use those for unchanged files on the next scan. -->
+	<arg name="cache" value="./../tmp/phpcs.json"/>
+
+</ruleset>

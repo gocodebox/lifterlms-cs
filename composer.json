@@ -12,9 +12,10 @@
   "minimum-stability": "dev",
   "require": {
     "php": ">=7.4",
-    "wp-coding-standards/wpcs": "dev-develop",
+    "wp-coding-standards/wpcs": "dev-develop || ^2.3.0",
     "phpcompatibility/phpcompatibility-wp": "^2.0.0",
-    "slevomat/coding-standard": "^8.4"
+    "slevomat/coding-standard": "^8.4",
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2"
   },
   "require-dev": {
     "phpunit/phpunit": "^7.5"
@@ -30,6 +31,17 @@
     }
   },
   "scripts": {
+    "post-install-cmd": "@config-cs",
+    "post-update-cmd": "@config-cs",
+
+    "config-cs": [
+      "\"vendor/bin/phpcs\" --config-set ignore_warnings_on_exit 1",
+      "Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run"
+    ],
+    "check-cs": "\"vendor/bin/phpcs\" --colors",
+    "check-cs-errors": "\"vendor/bin/phpcs\" --colors --error-severity=1 --warning-severity=6",
+    "fix-cs": "\"vendor/bin/phpcbf\"",
+
     "tests": "\"vendor/bin/phpunit\"",
     "docs": [
         "@php ./bin/ruleset-parse.php LifterLMS-Modern/ruleset.xml"

@@ -1,15 +1,22 @@
 <?php
 
+/**
+ * Abstract TestCase file.
+ *
+ * @package LifterLMSCS\LifterLMS\Sniffs
+ *
+ * @since [version]
+ * @version [version]
+ */
+
 declare( strict_types=1 );
 
 namespace LifterLMSCS\LifterLMS\Sniffs;
-
 
 use PHP_CodeSniffer\Config;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Files\LocalFile;
 use PHP_CodeSniffer\Runner;
-use PHP_CodeSniffer\Sniffs\Sniff;
 
 /**
  * @codeCoverageIgnore
@@ -17,11 +24,14 @@ use PHP_CodeSniffer\Sniffs\Sniff;
 abstract class TestCase extends \SlevomatCodingStandard\Sniffs\TestCase {
 
 	/**
-	 * @param (string|int|bool|array<int|string, (string|int|bool|null)>)[] $sniffProperties
-	 * @param string[] $codesToCheck
-	 * @param string[] $cliArgs
+	 * Runs PHPCS against the provided file.
+	 *
+	 * @param array    $sniffProperties Sniff property customizations.
+	 * @param string[] $codesToCheck    Only check the specified error codes.
+	 * @param string[] $cliArgs         CLI Args to pass to PHPCS.
+	 * @return File
 	 */
-	protected static function checkFile(string $filePath, array $sniffProperties = [], array $codesToCheck = [], array $cliArgs = []): File {
+	protected static function checkFile( string $filePath, array $sniffProperties = [], array $codesToCheck = [], array $cliArgs = [] ): File {
 
 		if (defined('PHP_CODESNIFFER_CBF') === false) {
 			define('PHP_CODESNIFFER_CBF', false);
@@ -64,9 +74,14 @@ abstract class TestCase extends \SlevomatCodingStandard\Sniffs\TestCase {
 	}
 
 	/**
-	 * @param (string|int|bool|array<int|string, (string|int|bool|null)>)[] $sniffProperties
-	 * @param string[] $codesToCheck
-	 * @param string[] $cliArgs
+	 * Runs PHPCS against the file for the specified test method.
+	 *
+	 * @param string   $method          The full qualified test method name.
+	 * @param string   $testDirPath     The full path to the test directory.
+	 * @param array    $sniffProperties Sniff property customizations.
+	 * @param string[] $codesToCheck    Only check the specified error codes.
+	 * @param string[] $cliArgs         CLI Args to pass to PHPCS.
+	 * @return File
 	 */
 	protected static function checkFileForTest( string $method, string $testDirPath, array $sniffProperties = [], array $codesToCheck = [], array $cliArgs = [] ): File {
 
@@ -79,11 +94,15 @@ abstract class TestCase extends \SlevomatCodingStandard\Sniffs\TestCase {
 		$test = implode( '', $test );
 
 		$filePath = $testDirPath . '/data/' . $sniff[0] . $test . '.php';
+		if ( ! file_exists( $filePath ) ) {
+			touch( $filePath );
+			var_dump( "File created for test \"$method\" at $filePath." );
+		}
 
 		return self::checkFile( $filePath, $sniffProperties, $codesToCheck, $cliArgs );
 	}
 
-	private static function getSniffNameWithoutPrefix() {
+	private static function getSniffNameWithoutPrefix(): string {
 		$reflector = new \ReflectionClass( static::class );
 		$method    = $reflector->getMethod( 'getSniffName' );
 		$method->setAccessible( true );
@@ -91,7 +110,7 @@ abstract class TestCase extends \SlevomatCodingStandard\Sniffs\TestCase {
 		return str_replace( 'LifterLMSCS.', '', $name );
 	}
 
-	protected static function assertSniffError(File $phpcsFile, int $line, string $code, ?string $message = null): void {
+	protected static function assertSniffError( File $phpcsFile, int $line, string $code, ?string $message = null ): void {
 
 		$reflector          = new \ReflectionClass( static::class );
 		$hasError           = $reflector->getMethod( 'hasError' );

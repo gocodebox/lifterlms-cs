@@ -53,7 +53,7 @@
 
 		Our modern projects require PHP 7.4 or later and utilize namepsaces, [PSR-4 autoloading](https://www.php-fig.org/psr/psr-4/),
 		strict typing, short array syntax, and other language features as described below.
-	-->r
+	-->
 
 
 	<!-- 2. General -->
@@ -75,7 +75,7 @@
 
 		<!-- + The Short Array syntax MUST be used. -->
 		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found" />
-		<exclude name="Universal.Arrays.DisallowShortArraySyntax" />
+		<!-- @see Universal.Arrays.DisallowShortArraySyntax -->
 
 		<!-- + Classnames MUST NOT follow the default WordPress naming conventions and should -->
 		<exclude name="PEAR.NamingConventions.ValidClassName" />
@@ -233,11 +233,11 @@
 
 		The `@package` tag SHOULD match the file's namespace.
 	-->
-	<rule ref="LifterLMS.Commenting.FileComment">
+	<rule ref="LifterLMS.Commenting.FileCommentTags">
 		<properties>
 			<property name="groups" type="array">
-				<element value="@package" />
-				<element value="@since @version" />
+				<element value="*@package" />
+				<element value="*@since *@version" />
 			</property>
 		</properties>
 	</rule>
@@ -329,6 +329,46 @@
 	-->
 	<rule ref="PSR1.Classes.ClassDeclaration" />
 	<!-- @see Generic.Classes.OpeningBraceSameLine -->
+
+	<!-- 5.2. Class Comment -->
+	<!--
+		The class comment MUST include a class summary, an optional description, and a changelog tag group.
+
+		The changelog tag group MUST contain at least one `@since` tag which details the version when the class was
+		introduced. A description of the introduction MUST NOT be included.
+
+		Additional `@since` tags may be added to the group to record the removal of public or protected
+		class members which have been removed from the class. A short description of the change MUST be recorded.
+
+		A single `@deprecated` tag MUST be added to the changelog section when the class is marked as deprecated. A
+		description of the deprecation SHOULD be included.
+
+		Each section of the class comment MUST be separated by a single line.
+
+		Example:
+		```php
+		/**
+		 * Class summary.
+		 *
+		 * An optional class description.
+		 *
+		 * @since 1.2.3
+		 * @since 4.5.6 A short change description.
+		 * @deprecated 7.8.9 A short description of the deprecation.
+		 */
+		```
+
+		The class short description MUST start with a capital letter and MUST end with a full-stop.
+
+		If included, the file long description MUST start with a capital letter and must end with a full-stop.
+	-->
+	<rule ref="LifterLMS.Commenting.ClassCommentTags">
+		<properties>
+			<property name="groups" type="array">
+				<element value="*@since... @deprecated" />
+			</property>
+		</properties>
+	</rule>
 
 	<!-- 5.2. Class Structure -->
 	<!--

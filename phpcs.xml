@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<ruleset name="LLMS-COM-PPC">
+
+	<description>LifterLMS Rules for PHP_CodeSniffer</description>
+
+	<file>.</file>
+
+    <!-- Exclude sniff test data files (which will have CS problems by design). -->
+    <exclude-pattern type="relative">tests/**/data/*.php</exclude-pattern>
+
+	<!-- Strip the filepaths down to the relevant bit. -->
+	<arg name="basepath" value="./../"/>
+
+	<!-- Include LifterLMS PHPCS Config "Ruleset". -->
+	<rule ref="LifterLMS-Config" />
+
+	<!-- This codebase adeheres to the LifterLMS "Modern" PHP Standard. -->
+	<rule ref="LifterLMS-Modern" />
+
+	<!-- Allow REST schema definition files to exceed the line length limits. -->
+	<rule ref="Generic.Files.LineLength.TooLong">
+		<exclude-pattern type="relative">src/REST/Schemas/*.php</exclude-pattern>
+	</rule>
+
+	<rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
+		<exclude-pattern type="relative">lifterlms-com-paypal-connect.php</exclude-pattern>
+	</rule>
+
+</ruleset>

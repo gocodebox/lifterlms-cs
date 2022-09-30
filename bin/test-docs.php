@@ -1,12 +1,25 @@
 <?php
 
+/**
+ * Ruleset documentation test
+ *
+ * Tests that all sniffs used by the specified ruleset are documented / referenced in the ruleset file.
+ *
+ * @package LifterLMSCS\Bin
+ *
+ * @since [version]
+ * @version [version]
+ */
+
+declare( strict_types=1 );
+
 namespace LifterLMSCS\Bin;
 
 $standard = $argv[1] ?? null;
 
 if ( ! $standard ) {
 	echo PHP_EOL;
-	echo "Usage: {$argv[0]} <standard>" . PHP_EOL;
+	echo "Usage: {$argv[0]} <standard>" . PHP_EOL; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	echo PHP_EOL;
 	echo '<standard> Standard to check' . PHP_EOL;
 	echo PHP_EOL;
@@ -31,7 +44,7 @@ $documented_sniffs = [];
 while ( $reader->read() ) {
 
 	$sniff = null;
-	if ( XMLReader::COMMENT === $reader->nodeType ) {
+	if ( XMLReader::COMMENT === $reader->nodeType ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		$line = str_replace(
 			[ '<!--', '-->' ],
 			[ '', '' ],
@@ -42,9 +55,9 @@ while ( $reader->read() ) {
 			continue;
 		}
 		$sniff = trim( str_replace( '@see', '', $line ) );
-	} elseif ( XMLReader::ELEMENT === $reader->nodeType ) {
+	} elseif ( XMLReader::ELEMENT === $reader->nodeType ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		$node = $reader->expand();
-		if ( 'rule' === $node->nodeName ) {
+		if ( 'rule' === $node->nodeName ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			$sniff = $node->attributes->getNamedItem( 'ref' )->value;
 			// Only use the first 3 parts of the sniff (namespace.type.rule) and ignore the rule settings/properties.
 			$sniff = implode( '.', array_slice( explode( '.', $sniff ), 0, 3 ) );
@@ -96,9 +109,6 @@ $loaded_sniffs = array_map(
 sort( $documented_sniffs );
 sort( $loaded_sniffs );
 
-// var_dump( $documented_sniffs );
-// var_dump( $loaded_sniffs );
-
 $missing     = array_diff( $loaded_sniffs, $documented_sniffs );
 $num_missing = count( $missing );
 
@@ -110,11 +120,11 @@ if ( 0 === $num_missing ) {
 }
 
 echo PHP_EOL;
-echo "The following {$num_missing} sniffs are not referenced in the {$standard} ruleset:" . PHP_EOL;
+echo "The following {$num_missing} sniffs are not referenced in the {$standard} ruleset:" . PHP_EOL; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 echo PHP_EOL;
 
 foreach ( $missing as $sniff ) {
-	echo "  {$sniff}" . PHP_EOL;
+	echo "  {$sniff}" . PHP_EOL; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 echo PHP_EOL;
 exit( 1 );

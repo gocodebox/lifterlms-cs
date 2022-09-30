@@ -13,7 +13,6 @@ declare( strict_types=1 );
 
 namespace LifterLMSCS\LifterLMS\Sniffs\Commenting;
 
-use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Util\Tokens;
 
 /**
@@ -55,10 +54,10 @@ class ClassCommentTagsSniff extends AbstractCommentTags {
 	 * @param int                         $stack_ptr  The position of the current token
 	 *                                                in the stack passed in $tokens.
 	 */
-	public function process( File $phpcs_file, int $stack_ptr ): void {
+	public function process( $phpcs_file, $stack_ptr ) { // phpcs:ignore SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint, SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint, SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
 
 		$tokens               = $phpcs_file->getTokens();
-		$find                 = Tokens::$methodPrefixes;
+		$find                 = Tokens::$methodPrefixes; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		$find[ T_WHITESPACE ] = T_WHITESPACE;
 
 		$prev_content = null;
@@ -83,7 +82,10 @@ class ClassCommentTagsSniff extends AbstractCommentTags {
 			break;
 		}
 
-		$comment_start = $tokens[ $comment_end ]['comment_opener'];
+		$comment_start = $tokens[ $comment_end ]['comment_opener'] ?? false;
+		if ( ! $comment_start ) {
+			return;
+		}
 		$this->process_tag_group( $phpcs_file, $comment_start );
 
 	}

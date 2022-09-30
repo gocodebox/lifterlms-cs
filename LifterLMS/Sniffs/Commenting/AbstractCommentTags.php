@@ -13,8 +13,8 @@ declare( strict_types=1 );
 
 namespace LifterLMSCS\LifterLMS\Sniffs\Commenting;
 
-use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
 
 /**
  * Parses and verifies the class doc comment contains the configured tags / tag groups.
@@ -54,32 +54,6 @@ abstract class AbstractCommentTags implements Sniff {
 	public const CODE_VALID_WRONG_GROUP = 'ValidTagInWrongGroup';
 
 	/**
-	 * Whether or not extra tags (not defined in $groups) are allowed.
-	 *
-	 * If `true`, any extra tags should be found in their own group after
-	 * the defined groups.
-	 *
-	 * @var boolean
-	 */
-	public bool $allowExtraTags = false;
-
-	/**
-	 * List of the expected tag groups and their order within each group.
-	 *
-	 * This array should be an array strings and each string is a space-separated list of
-	 * the tags to be found in the group.
-	 *
-	 * Each group must be separated by an empty line. If a tag is defined in the group it
-	 * is required.
-	 *
-	 * Any tags that are not listed are considered invalid unless the `$allowExtraTags`
-	 * property is `true`.
-	 *
-	 * @var string[]
-	 */
-	public array $groups = [];
-
-	/**
 	 * An array of tokens to ignore.
 	 *
 	 * @var string[]
@@ -95,7 +69,31 @@ abstract class AbstractCommentTags implements Sniff {
 	 *
 	 * @var array
 	 */
-	protected $list_tags = [];
+	protected array $list_tags = [];
+
+	/**
+	 * Whether or not extra tags (not defined in $groups) are allowed.
+	 *
+	 * If `true`, any extra tags should be found in their own group after
+	 * the defined groups.
+	 */
+	public bool $allow_extra_tags = false;
+
+	/**
+	 * List of the expected tag groups and their order within each group.
+	 *
+	 * This array should be an array strings and each string is a space-separated list of
+	 * the tags to be found in the group.
+	 *
+	 * Each group must be separated by an empty line. If a tag is defined in the group it
+	 * is required.
+	 *
+	 * Any tags that are not listed are considered invalid unless the `$allow_extra_tags`
+	 * property is `true`.
+	 *
+	 * @var string[]
+	 */
+	public array $groups = [];
 
 	/**
 	 * Find the expected index of the tag group where the supplied tag belongs.
@@ -108,9 +106,9 @@ abstract class AbstractCommentTags implements Sniff {
 	 */
 	protected function find_expected_tag_group_for_tag( array $groups, string $tag_name ): int|bool {
 
-		foreach ( $groups as $groupIndex => $group ) {
+		foreach ( $groups as $i => $group ) {
 			if ( in_array( $tag_name, $group, true ) ) {
-				return $groupIndex;
+				return $i;
 			}
 		}
 
@@ -148,10 +146,10 @@ abstract class AbstractCommentTags implements Sniff {
 
 				$tags = [];
 				foreach ( explode( ' ', $group ) as $tag ) {
-					$required     = 0 === strpos( $tag, '*' );
-					$tag          = $required ? substr( $tag, 1 ) : $tag;
+					$required = 0 === strpos( $tag, '*' );
+					$tag      = $required ? substr( $tag, 1 ) : $tag;
 					if ( '...' === substr( $tag, -3 ) ) {
-						$tag = substr( $tag, 0, strlen( $tag ) - 3 );
+						$tag               = substr( $tag, 0, strlen( $tag ) - 3 );
 						$this->list_tags[] = $tag;
 					}
 
@@ -173,7 +171,7 @@ abstract class AbstractCommentTags implements Sniff {
 	 * @since [version]
 	 *
 	 * @param array $group Tag group array.
-	 * @return boolean Returns `true` if the group is required and `false` if it is not required.
+	 * @return bool Returns `true` if the group is required and `false` if it is not required.
 	 */
 	protected function is_tag_group_required( array $group ): bool {
 		$vals = array_unique( array_values( $group ) );
@@ -190,9 +188,8 @@ abstract class AbstractCommentTags implements Sniff {
 	 *
 	 * @param \PHP_CodeSniffer\Files\File $phpcs_file    The file being scanned.
 	 * @param int                         $comment_start Position where the comment starts.
-	 * @return void
 	 */
-	protected function process_tag_group( $phpcs_file, $comment_start ): void {
+	protected function process_tag_group( File $phpcs_file, int $comment_start ): void {
 
 		$tokens = $phpcs_file->getTokens();
 
@@ -204,7 +201,7 @@ abstract class AbstractCommentTags implements Sniff {
 		$curr_group_index      = 0;
 		$tag_counts            = [];
 
-		foreach ( $tokens[ $comment_start ]['comment_tags'] as $tagIndex => $tag ) {
+		foreach ( $tokens[ $comment_start ]['comment_tags'] as $tag ) {
 
 			// Current tag name.
 			$name = $tokens[ $tag ]['content'];
@@ -219,26 +216,29 @@ abstract class AbstractCommentTags implements Sniff {
 			$actual[ $curr_group_index ][] = $name;
 
 			// Setup the current expected and actual groups.
-			$currGroup       = $expected[ $curr_group_index ] ?? array();
-			$actualCurrGroup = $actual[ $curr_group_index ] ?? array();
+			$curr_group        = $expected[ $curr_group_index ] ?? [];
+			$actual_curr_group = $actual[ $curr_group_index ] ?? [];
 
 			// Check if the next tag is in the same group as the current tag.
-			$nextTag = $phpcs_file->findNext( $this->ignored_tokens, $tag + 1, null, true );
-			if ( 1 !== $tokens[ $nextTag ]['line'] - $tokens[ $tag ]['line'] ) {
+			$next_tag = $phpcs_file->findNext( $this->ignored_tokens, $tag + 1, null, true );
+			if ( 1 !== $tokens[ $next_tag ]['line'] - $tokens[ $tag ]['line'] ) {
 				$curr_group_index++;
 			}
 
-			$isValidTag = in_array( $name, array_keys( $valid_tags ), true );
+			$is_valid_tag = in_array( $name, array_keys( $valid_tags ), true );
 
-			// If extra tags are allowed, the tag isn't a valid predefined tag, and this the expected extra tag group, we can skip remaining checks.
-			if ( $this->allowExtraTags && ! $isValidTag && $total_expected_groups === $curr_group_index ) {
+			/*
+			 * If extra tags are allowed, the tag isn't a valid predefined tag,
+			 * and this the expected extra tag group, we can skip remaining checks.
+			 */
+			if ( $this->allow_extra_tags && ! $is_valid_tag && $total_expected_groups === $curr_group_index ) {
 				continue;
 			}
 
 			$found_tags[] = $name;
 
 			// The tag is invalid or in the incorrect group.
-			if ( ! in_array( $name, array_keys( $currGroup ), true ) ) {
+			if ( ! in_array( $name, array_keys( $curr_group ), true ) ) {
 
 				$code = self::CODE_INVALID;
 				$msg  = sprintf(
@@ -251,15 +251,15 @@ abstract class AbstractCommentTags implements Sniff {
 					$curr_group_index
 				);
 
-				if ( $isValidTag ) {
+				if ( $is_valid_tag ) {
 					$code = self::CODE_VALID_WRONG_GROUP;
 					$msg  = $base . sprintf(
 						'; The tag should be in the tag group at position %1$d',
 						$this->find_expected_tag_group_for_tag( $expected, $name )
 					);
-				} elseif ( $this->allowExtraTags ) {
+				} elseif ( $this->allow_extra_tags ) {
 					$code = self::CODE_EXTRA_WRONG_GROUP;
-					$msg  =  $base . sprintf(
+					$msg  = $base . sprintf(
 						'; Extra tags should be in the tag group at position %1$d',
 						$total_expected_groups
 					);
@@ -268,13 +268,17 @@ abstract class AbstractCommentTags implements Sniff {
 				$phpcs_file->addError( $msg, $tag, $code );
 			}
 
-			$curr_group_tags       = array_keys( $currGroup );
+			$curr_group_tags       = array_keys( $curr_group );
 			$expected_pos_in_group = array_search( $name, $curr_group_tags, true );
-			$actual_pos_in_group   = array_search( $name, $actualCurrGroup, true );
+			$actual_pos_in_group   = array_search( $name, $actual_curr_group, true );
 			$previous_tag          = ! $expected_pos_in_group ? false : $curr_group_tags[ $expected_pos_in_group - 1 ];
-			$previous_tag_optional = $previous_tag ? ! $currGroup[ $previous_tag ] : null;
+			$previous_tag_optional = $previous_tag ? ! $curr_group[ $previous_tag ] : null;
 
-			if ( $isValidTag && $expected_pos_in_group !== $actual_pos_in_group && ! $previous_tag_optional && ! in_array( $previous_tag, $this->list_tags, true ) ) {
+			if (
+				$is_valid_tag &&
+				$expected_pos_in_group !== $actual_pos_in_group &&
+				! $previous_tag_optional &&
+				! in_array( $previous_tag, $this->list_tags, true ) ) {
 				$phpcs_file->addError(
 					sprintf(
 						'The tag "%1$s" was found in position %2$d but should be in position %3$d',
@@ -287,7 +291,7 @@ abstract class AbstractCommentTags implements Sniff {
 				);
 			}
 
-			if ( $isValidTag && $tag_counts[ $name ] > 1 && ! in_array( $name, $this->list_tags, true ) ) {
+			if ( $is_valid_tag && $tag_counts[ $name ] > 1 && ! in_array( $name, $this->list_tags, true ) ) {
 				$phpcs_file->addError(
 					sprintf(
 						'The tag "%1$s" may only be declared once',
@@ -300,18 +304,18 @@ abstract class AbstractCommentTags implements Sniff {
 		}
 
 		// Throw errors for any missing tags.
-		foreach ( array_diff( array_keys( $valid_tags ), $found_tags ) as $missingTag ) {
+		foreach ( array_diff( array_keys( $valid_tags ), $found_tags ) as $missing_tag ) {
 
 			// Optional tag, continue without it.
-			if ( false === $valid_tags[ $missingTag ] ) {
+			if ( false === $valid_tags[ $missing_tag ] ) {
 				continue;
 			}
 
 			$phpcs_file->addError(
 				sprintf(
 					'Missing tag "%1$s"; The tag should be present in the tag group at position %2$d',
-					$missingTag,
-					$this->find_expected_tag_group_for_tag( $expected, $missingTag )
+					$missing_tag,
+					$this->find_expected_tag_group_for_tag( $expected, $missing_tag )
 				),
 				$comment_start,
 				self::CODE_MISSING

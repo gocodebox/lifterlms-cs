@@ -1,12 +1,25 @@
 <?php
 
+/**
+ * Ruleset documentation test
+ *
+ * Tests that all sniffs used by the specified ruleset are documented / referenced in the ruleset file.
+ *
+ * @package LifterLMSCS\Bin
+ *
+ * @since [version]
+ * @version [version]
+ */
+
+declare( strict_types=1 );
+
 namespace LifterLMSCS\Bin;
 
 $ruleset = $argv[1] ?? null;
 
 if ( ! $ruleset ) {
 	echo PHP_EOL;
-	echo "Usage: {$argv[0]} <rulesetPath>" . PHP_EOL;
+	echo "Usage: {$argv[0]} <rulesetPath>" . PHP_EOL; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	echo PHP_EOL;
 	echo '<rulesetPath> Path to the ruleset.xml file to parse' . PHP_EOL;
 	echo PHP_EOL;
@@ -27,7 +40,16 @@ $is_in_list        = false;
 $standard = [];
 $toc      = [];
 
-function format_line( $line, $add_new_line = true, &$toc = [] ) {
+/**
+ * Formats a line.
+ *
+ * @since [version]
+ *
+ * @param string $line         The line to format.
+ * @param bool   $add_new_line Whether or not to add a new line at the end of the line.
+ * @param array  $toc          The table of contents var.
+ */
+function format_line( string $line, bool $add_new_line = true, array &$toc = [] ): string {
 
 	// Strip comment tags.
 	$line = str_replace(
@@ -71,7 +93,7 @@ $reader = new XMLReader();
 $reader->open( ROOT_DIR . '/' . $ruleset );
 
 while ( $reader->read() ) {
-	if ( XMLReader::COMMENT === $reader->nodeType ) {
+	if ( XMLReader::COMMENT === $reader->nodeType ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
 		$line = $reader->readOuterXml();
 
@@ -81,7 +103,9 @@ while ( $reader->read() ) {
 			continue;
 		} elseif ( ! $start_token_found ) {
 			continue;
-		} elseif ( false !== strpos( $line, '@parserIgnore' ) || false !== strpos( $line, '@see' ) || false !== strpos( $line, '@link' ) ) {
+		} elseif (
+			false !== strpos( $line, '@parserIgnore' ) ||
+			false !== strpos( $line, '@see' ) || false !== strpos( $line, '@link' ) ) {
 			continue;
 		}
 
@@ -124,5 +148,5 @@ $body = str_replace(
 	implode( NEWLINE, $standard )
 );
 
-$fh = fopen( ROOT_DIR . '/docs/php-modern-coding-standard.md', 'w' );
-fwrite( $fh, $body );
+$fh = fopen( ROOT_DIR . '/docs/php-modern-coding-standard.md', 'w' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fopen
+fwrite( $fh, $body ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fwrite

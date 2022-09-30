@@ -1,14 +1,22 @@
 <?php
 
+/**
+ * FileCommentTagsSniff class file.
+ *
+ * @package LifterLMSCS\LifterLMS\Sniffs\Commenting
+ *
+ * @since [version]
+ * @version [version]
+ */
+
+declare( strict_types=1 );
+
 namespace LifterLMSCS\LifterLMS\Sniffs\Commenting;
 
-use PHP_CodeSniffer\Files\File;
-
 /**
- * Customizes the default Squiz_FileCommentSniff to match tags
- * in the order specified by LifterLMS documentation standards
+ * Parses and verifies the file doc comment contains the configured tags / tag groups.
  *
- * @link https://github.com/gocodebox/lifterlms/blob/master/docs/documentation-standards.md#file-headers
+ * @since [version]
  */
 class FileCommentTagsSniff extends AbstractCommentTags {
 
@@ -39,26 +47,26 @@ class FileCommentTagsSniff extends AbstractCommentTags {
 	 *                                                in the stack passed in $tokens.
 	 * @return int Stack pointer to skip the rest of the file.
 	 */
-	public function process( File $phpcs_file, int $stack_ptr ): int {
+	public function process( $phpcs_file, $stack_ptr ) { // phpcs:ignore SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint, SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint, SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint, Generic.Files.LineLength.TooLong
 
 		$tokens        = $phpcs_file->getTokens();
 		$comment_start = $phpcs_file->findNext( T_WHITESPACE, $stack_ptr + 1, null, true );
 
 		// Don't process an unfinished file comment during live coding.
 		if (
-			isset( $tokens[ $comment_start ]['comment_closer'] ) === false ||
+			false === isset( $tokens[ $comment_start ]['comment_closer'] ) ||
 			(
-				$tokens[ $tokens[ $comment_start ]['comment_closer'] ]['content'] === '' &&
-				$tokens[ $comment_start ]['comment_closer'] === $phpcs_file->numTokens - 1
+				'' === $tokens[ $tokens[ $comment_start ]['comment_closer'] ]['content'] &&
+				$tokens[ $comment_start ]['comment_closer'] === $phpcs_file->numTokens - 1 // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			)
 		) {
-			return $phpcs_file->numTokens + 1;
+			return $phpcs_file->numTokens + 1; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		}
 
 		$this->process_tag_group( $phpcs_file, $comment_start );
 
 		// Ignore the rest of the file.
-		return $phpcs_file->numTokens + 1;
+		return $phpcs_file->numTokens + 1; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
 	}
 }

@@ -19,11 +19,20 @@ use PHP_CodeSniffer\Files\LocalFile;
 use PHP_CodeSniffer\Runner;
 
 /**
- * @codeCoverageIgnore
+ * Base PHPUNit TestCase class.
+ *
+ * @since [version]
  */
 abstract class TestCase extends \SlevomatCodingStandard\Sniffs\TestCase {
 
-	private static function getSniffNameWithoutPrefix(): string {
+	/**
+	 * Retrieves the tested sniffs name without the LifterLMSCS prefix.
+	 *
+	 * @since [version]
+	 *
+	 * @return string The sniff name.
+	 */
+	private static function get_sniff_name_without_prefix(): string {
 		$reflector = new \ReflectionClass( static::class );
 		$method    = $reflector->getMethod( 'getSniffName' );
 		$method->setAccessible( true );
@@ -34,47 +43,53 @@ abstract class TestCase extends \SlevomatCodingStandard\Sniffs\TestCase {
 	/**
 	 * Runs PHPCS against the provided file.
 	 *
-	 * @param array    $sniffProperties Sniff property customizations.
-	 * @param string[] $codesToCheck    Only check the specified error codes.
-	 * @param string[] $cliArgs         CLI Args to pass to PHPCS.
+	 * @param string   $file_path      Absolute path to the tested file.
+	 * @param array    $sniff_props    Sniff property customizations.
+	 * @param string[] $codes_to_check Only check the specified error codes.
+	 * @param string[] $cli_args       CLI Args to pass to PHPCS.
 	 */
-	protected static function checkFile( string $filePath, array $sniffProperties = [], array $codesToCheck = [], array $cliArgs = [] ): File {
+	protected static function checkFile(
+		string $file_path,
+		array $sniff_props = [],
+		array $codes_to_check = [],
+		array $cli_args = []
+	): File {
 
 		if ( defined( 'PHP_CODESNIFFER_CBF' ) === false ) {
 			define( 'PHP_CODESNIFFER_CBF', false );
 		}
-		$codeSniffer         = new Runner();
-		$codeSniffer->config = new Config( array_merge( [ '-s' ], $cliArgs ) );
-		$codeSniffer->init();
+		$code_sniffer         = new Runner();
+		$code_sniffer->config = new Config( array_merge( [ '-s' ], $cli_args ) );
+		$code_sniffer->init();
 
-		if ( count( $sniffProperties ) > 0 ) {
-			$codeSniffer->ruleset->ruleset[ self::getSniffNameWithoutPrefix() ]['properties'] = $sniffProperties;
+		if ( count( $sniff_props ) > 0 ) {
+			$code_sniffer->ruleset->ruleset[ self::get_sniff_name_without_prefix() ]['properties'] = $sniff_props;
 		}
 
-		$reflector         = new \ReflectionClass( static::class );
-		$getSniffClassName = $reflector->getMethod( 'getSniffClassName' );
+		$reflector           = new \ReflectionClass( static::class );
+		$get_sniff_classname = $reflector->getMethod( 'getSniffClassName' );
+		$get_sniff_classname->setAccessible( true );
 
-		$getSniffClassName->setAccessible( true );
+		$sniff_classname = $get_sniff_classname->invoke( null );
 
-		$sniffClassName = $getSniffClassName->invoke( null );
-		/** @var Sniff $sniff */
-		$sniff = new $sniffClassName();
+		$sniff = new $sniff_classname();
 
-		$codeSniffer->ruleset->sniffs = [ $sniffClassName => $sniff ];
+		$code_sniffer->ruleset->sniffs = [ $sniff_classname => $sniff ];
 
-		if ( count( $codesToCheck ) > 0 ) {
-			foreach ( self::getSniffClassReflection()->getConstants() as $constantName => $constantValue ) {
-				if ( strpos( $constantName, 'CODE_' ) !== 0 || in_array( $constantValue, $codesToCheck, true ) ) {
+		if ( count( $codes_to_check ) > 0 ) {
+			foreach ( self::getSniffClassReflection()->getConstants() as $const_name => $const_val ) {
+				if ( strpos( $const_name, 'CODE_' ) !== 0 || in_array( $const_val, $codes_to_check, true ) ) {
 					continue;
 				}
 
-				$codeSniffer->ruleset->ruleset[ sprintf( '%s.%s', self::getSniffNameWithoutPrefix(), $constantValue ) ]['severity'] = 0;
+				$index = sprintf( '%s.%s', self::get_sniff_name_without_prefix(), $const_val );
+				$code_sniffer->ruleset->ruleset[ $index ]['severity'] = 0;
 			}
 		}
 
-		$codeSniffer->ruleset->populateTokenListeners();
+		$code_sniffer->ruleset->populateTokenListeners();
 
-		$file = new LocalFile( $filePath, $codeSniffer->ruleset, $codeSniffer->config );
+		$file = new LocalFile( $file_path, $code_sniffer->ruleset, $code_sniffer->config );
 		$file->process();
 
 		return $file;
@@ -83,13 +98,19 @@ abstract class TestCase extends \SlevomatCodingStandard\Sniffs\TestCase {
 	/**
 	 * Runs PHPCS against the file for the specified test method.
 	 *
-	 * @param string   $method          The full qualified test method name.
-	 * @param string   $testDirPath     The full path to the test directory.
-	 * @param array    $sniffProperties Sniff property customizations.
-	 * @param string[] $codesToCheck    Only check the specified error codes.
-	 * @param string[] $cliArgs         CLI Args to pass to PHPCS.
+	 * @param string   $method            The full qualified test method name.
+	 * @param string   $test_dir_path     The full path to the test directory.
+	 * @param array    $sniff_props Sniff property customizations.
+	 * @param string[] $codes_to_check    Only check the specified error codes.
+	 * @param string[] $cli_args          CLI Args to pass to PHPCS.
 	 */
-	protected static function checkFileForTest( string $method, string $testDirPath, array $sniffProperties = [], array $codesToCheck = [], array $cliArgs = [] ): File {
+	protected static function checkFileForTest(
+		string $method,
+		string $test_dir_path,
+		array $sniff_props = [],
+		array $codes_to_check = [],
+		array $cli_args = []
+	): File {
 
 		$sniff = explode( '\\', $method );
 		$sniff = lcfirst( end( $sniff ) );
@@ -99,42 +120,56 @@ abstract class TestCase extends \SlevomatCodingStandard\Sniffs\TestCase {
 		$test = array_map( 'ucfirst', $test );
 		$test = implode( '', $test );
 
-		$filePath = $testDirPath . '/data/' . $sniff[0] . $test . '.php';
-		if ( ! file_exists( $filePath ) ) {
-			touch( $filePath );
-			var_dump( "File created for test \"$method\" at $filePath." );
+		$file_path = $test_dir_path . '/data/' . $sniff[0] . $test . '.php';
+		if ( ! file_exists( $file_path ) ) {
+			touch( $file_path );
 		}
 
-		return self::checkFile( $filePath, $sniffProperties, $codesToCheck, $cliArgs );
+		return self::checkFile( $file_path, $sniff_props, $codes_to_check, $cli_args );
 	}
 
-	protected static function assertSniffError( File $phpcsFile, int $line, string $code, ?string $message = null ): void {
+	/**
+	 * Asserts a sniff error.
+	 *
+	 * @since [version]
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcs_file File being scanned.
+	 * @param int                         $line       Line number where errors are expected.
+	 * @param string                      $code       Expected sniff error code.
+	 * @param string|null                 $message    Expected sniff error message (optional).
+	 */
+	protected static function assertSniffError(
+		File $phpcs_file,
+		int $line,
+		string $code,
+		?string $message = null
+	): void {
 
 		$reflector          = new \ReflectionClass( static::class );
-		$hasError           = $reflector->getMethod( 'hasError' );
-		$getFormattedErrors = $reflector->getMethod( 'getFormattedErrors' );
+		$has_error          = $reflector->getMethod( 'hasError' );
+		$get_formatted_errs = $reflector->getMethod( 'getFormattedErrors' );
 
-		$hasError->setAccessible( true );
-		$getFormattedErrors->setAccessible( true );
+		$has_error->setAccessible( true );
+		$get_formatted_errs->setAccessible( true );
 
-		$errors = $phpcsFile->getErrors();
+		$errors = $phpcs_file->getErrors();
 		self::assertTrue( isset( $errors[ $line ] ), sprintf( 'Expected error on line %s, but none found.', $line ) );
 
-		$sniffCode = sprintf( '%s.%s', self::getSniffNameWithoutPrefix(), $code );
+		$sniff_code = sprintf( '%s.%s', self::get_sniff_name_without_prefix(), $code );
 
 		self::assertTrue(
-			$hasError->invoke( null, $errors[ $line ], $sniffCode, $message ),
+			$has_error->invoke( null, $errors[ $line ], $sniff_code, $message ),
 			sprintf(
 				'Expected error %s%s, but none found on line %d.%sErrors found on line %d:%s%s%s',
-				$sniffCode,
-				$message !== null
+				$sniff_code,
+				null !== $message
 					? sprintf( ' with message "%s"', $message )
 					: '',
 				$line,
 				PHP_EOL . PHP_EOL,
 				$line,
 				PHP_EOL,
-				$getFormattedErrors->invoke( null, $errors[ $line ] ),
+				$get_formatted_errs->invoke( null, $errors[ $line ] ),
 				PHP_EOL
 			)
 		);

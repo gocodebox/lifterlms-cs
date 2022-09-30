@@ -201,7 +201,7 @@ abstract class AbstractCommentTags implements Sniff {
 		$actual                = [];
 		$found_tags            = [];
 		$total_expected_groups = count( $expected );
-		$currGroupIndex        = 0;
+		$curr_group_index      = 0;
 		$tag_counts            = [];
 
 		foreach ( $tokens[ $comment_start ]['comment_tags'] as $tagIndex => $tag ) {
@@ -216,22 +216,22 @@ abstract class AbstractCommentTags implements Sniff {
 			++$tag_counts[ $name ];
 
 			// Setup an actual representation of the existing tag groups.
-			$actual[ $currGroupIndex ][] = $name;
+			$actual[ $curr_group_index ][] = $name;
 
 			// Setup the current expected and actual groups.
-			$currGroup       = $expected[ $currGroupIndex ] ?? array();
-			$actualCurrGroup = $actual[ $currGroupIndex ] ?? array();
+			$currGroup       = $expected[ $curr_group_index ] ?? array();
+			$actualCurrGroup = $actual[ $curr_group_index ] ?? array();
 
 			// Check if the next tag is in the same group as the current tag.
 			$nextTag = $phpcs_file->findNext( $this->ignored_tokens, $tag + 1, null, true );
 			if ( 1 !== $tokens[ $nextTag ]['line'] - $tokens[ $tag ]['line'] ) {
-				$currGroupIndex++;
+				$curr_group_index++;
 			}
 
 			$isValidTag = in_array( $name, array_keys( $valid_tags ), true );
 
 			// If extra tags are allowed, the tag isn't a valid predefined tag, and this the expected extra tag group, we can skip remaining checks.
-			if ( $this->allowExtraTags && ! $isValidTag && $total_expected_groups === $currGroupIndex ) {
+			if ( $this->allowExtraTags && ! $isValidTag && $total_expected_groups === $curr_group_index ) {
 				continue;
 			}
 
@@ -248,7 +248,7 @@ abstract class AbstractCommentTags implements Sniff {
 				$base = sprintf(
 					'The tag "%1$s" should not be in the tag group at position %2$d',
 					$name,
-					$currGroupIndex
+					$curr_group_index
 				);
 
 				if ( $isValidTag ) {

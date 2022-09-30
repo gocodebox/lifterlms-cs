@@ -11,11 +11,15 @@
 	<!-- Strip the filepaths down to the relevant bit. -->
 	<arg name="basepath" value="./../"/>
 
+    <!-- Whenever possible, cache the scan results and re-use those for unchanged files on the next scan. -->
+	<arg name="cache" value="./tmp/phpcs.json"/>
+
 	<!-- Include LifterLMS PHPCS Config "Ruleset". -->
 	<rule ref="LifterLMS-Config" />
 
 	<!-- This codebase adeheres to the LifterLMS "Modern" PHP Standard. -->
 	<rule ref="LifterLMS-Modern" />
+
 
 	<!-- Allow REST schema definition files to exceed the line length limits. -->
 	<rule ref="Generic.Files.LineLength.TooLong">

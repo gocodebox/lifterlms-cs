@@ -101,7 +101,7 @@ class FileCommentTagsSniffTest extends TestCase {
 					'*@test *@fake',
 					'*@mocker',
 					'*@additional *@moreCustom *@many',
-				]
+				],
 			]
 		);
 		self::assertNoSniffErrorInFile( $report );
@@ -119,7 +119,7 @@ class FileCommentTagsSniffTest extends TestCase {
 			[
 				'groups' => [
 					'@optionalTag @alsoOptionalTag',
-				]
+				],
 			]
 		);
 		self::assertNoSniffErrorInFile( $report );
@@ -155,7 +155,7 @@ class FileCommentTagsSniffTest extends TestCase {
 			__METHOD__,
 			__DIR__,
 			[
-				'groups' => [
+				'groups'           => [
 					'*@package',
 					'@optionalTag @alsoOptionalTag',
 					'*@since',
@@ -178,7 +178,7 @@ class FileCommentTagsSniffTest extends TestCase {
 			[
 				'groups' => [
 					'@optionalTag *@requiredTag',
-				]
+				],
 			]
 		);
 		self::assertNoSniffErrorInFile( $report );
@@ -196,7 +196,7 @@ class FileCommentTagsSniffTest extends TestCase {
 			[
 				'groups' => [
 					'@optionalTag *@requiredTag',
-				]
+				],
 			]
 		);
 		self::assertNoSniffErrorInFile( $report );

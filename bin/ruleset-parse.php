@@ -1,4 +1,5 @@
 <?php
+
 namespace LifterLMSCS\Bin;
 
 $ruleset = $argv[1] ?? null;
@@ -7,16 +8,16 @@ if ( ! $ruleset ) {
 	echo PHP_EOL;
 	echo "Usage: {$argv[0]} <rulesetPath>" . PHP_EOL;
 	echo PHP_EOL;
-	echo "<rulesetPath> Path to the ruleset.xml file to parse" . PHP_EOL;
+	echo '<rulesetPath> Path to the ruleset.xml file to parse' . PHP_EOL;
 	echo PHP_EOL;
 	die( 0 );
 }
 
 use XMLReader;
 
-const ROOT_DIR = __DIR__ . '/..';
-const START_TOKEN = '<!-- Parser-Start-Token -->';
-const NEWLINE = "\r";
+const ROOT_DIR       = __DIR__ . '/..';
+const START_TOKEN    = '<!-- Parser-Start-Token -->';
+const NEWLINE        = "\r";
 const CONTENTS_TOKEN = 'Table-of-Contents-Token';
 
 $start_token_found = false;
@@ -69,7 +70,7 @@ function format_line( $line, $add_new_line = true, &$toc = [] ) {
 $reader = new XMLReader();
 $reader->open( ROOT_DIR . '/' . $ruleset );
 
-while( $reader->read() ) {
+while ( $reader->read() ) {
 	if ( XMLReader::COMMENT === $reader->nodeType ) {
 
 		$line = $reader->readOuterXml();
@@ -100,18 +101,18 @@ while( $reader->read() ) {
 		// Finished with list.
 		if ( $is_in_list && '+' !== $first_char ) {
 			$is_in_list = false;
-			$line = NEWLINE . $line;
+			$line       = NEWLINE . $line;
 		}
 
 		$standard[] = $line;
 
 		if ( $is_title_line ) {
 			$is_title_line = false;
-			$standard[] = str_repeat( '=', strlen( $line ) );
-			$standard[] = '';
-			$time       = gmdate( 'Y-m-d\TH:i:s\Z', time() );
-			$standard[] = "<!-- These docs were automatically generated from the {$ruleset} file on {$time}. -->";
-			$standard[] = '';
+			$standard[]    = str_repeat( '=', strlen( $line ) );
+			$standard[]    = '';
+			$time          = gmdate( 'Y-m-d\TH:i:s\Z', time() );
+			$standard[]    = "<!-- These docs were automatically generated from the {$ruleset} file on {$time}. -->";
+			$standard[]    = '';
 		}
 	}
 }

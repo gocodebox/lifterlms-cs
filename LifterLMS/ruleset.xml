@@ -31,6 +31,9 @@
 		<exclude name="WordPress.DB.SlowDBQuery.slow_db_query_meta_value" />
 		<exclude name="WordPress.DB.SlowDBQuery.slow_db_query_meta_query" />
 		<exclude name="WordPress.DB.SlowDBQuery.slow_db_query_tax_query" />
+		<!-- Allow short array syntax. -->
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found" />
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax" />
 	</rule>
 
 	<!-- Add `llms_verify_nonce` to the list of allowed nonce verification functions -->

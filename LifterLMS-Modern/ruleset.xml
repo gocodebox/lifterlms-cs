@@ -41,13 +41,17 @@
 	-->
 	<rule ref="WordPress">
 
+		<!-- We do not care about Yoda Conditions -->
+		<exclude name="WordPress.PHP.YodaConditions.NotYoda" />
+
 		<!-- + File names should follow PSR-4 autoloading standards -->
 		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
 		<!-- @see WordPress.Files.FileName -->
 
-		<!-- + The Short Array syntax should be used. -->
+		<!-- + The Short Array syntax MUST be used. -->
 		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found" />
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax" />
 
 		<!-- + Classnames MUST NOT follow the default WordPress naming conventions and should -->
 		<exclude name="PEAR.NamingConventions.ValidClassName" />
@@ -143,6 +147,7 @@
 	<!-- Short form of type keywords MUST be used; i.e. `bool` instead of `boolean`, `int` instead of `integer` etc. -->
 	<!-- @see PSR12.Keywords.ShortFormTypeKeywords -->
 	<rule ref="SlevomatCodingStandard.TypeHints.LongTypeHints" />
+
 
 	<!-- 3. Files -->
 

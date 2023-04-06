@@ -46,9 +46,8 @@
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
 		<!-- @see WordPress.Files.FileName -->
 
-		<!-- + The Short Array syntax MUST be used. -->
+		<!-- + The Short Array syntax should be used. -->
 		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found" />
-		<exclude name="Universal.Arrays.DisallowShortArraySyntax" />
 
 		<!-- + Classnames MUST NOT follow the default WordPress naming conventions and should -->
 		<exclude name="PEAR.NamingConventions.ValidClassName" />
@@ -144,7 +143,6 @@
 	<!-- Short form of type keywords MUST be used; i.e. `bool` instead of `boolean`, `int` instead of `integer` etc. -->
 	<!-- @see PSR12.Keywords.ShortFormTypeKeywords -->
 	<rule ref="SlevomatCodingStandard.TypeHints.LongTypeHints" />
-
 
 	<!-- 3. Files -->
 

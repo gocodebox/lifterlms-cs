@@ -104,7 +104,7 @@ abstract class AbstractCommentTags implements Sniff {
 	 * @param string  $tag_name The tag name.
 	 * @return int|bool Returns the index of the expected tag group or `false` if not found.
 	 */
-	protected function find_expected_tag_group_for_tag( array $groups, string $tag_name ): int|bool {
+	protected function find_expected_tag_group_for_tag( array $groups, string $tag_name ) { //phpcs:ignore SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
 
 		foreach ( $groups as $i => $group ) {
 			if ( in_array( $tag_name, $group, true ) ) {

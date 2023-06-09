@@ -29,6 +29,7 @@ class ClassCommentTagsSniff extends AbstractCommentTags {
 	 */
 	public array $groups = [
 		'*@since... @deprecated',
+		'@property...',
 	];
 
 	/**

@@ -343,6 +343,7 @@
 		<properties>
 			<property name="groups" type="array">
 				<element value="*@since... @deprecated" />
+				<element value="@property..." />
 			</property>
 		</properties>
 	</rule>

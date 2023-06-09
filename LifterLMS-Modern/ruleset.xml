@@ -232,7 +232,7 @@
 		A file SHOULD declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it
 		SHOULD execute logic with side effects, but SHOULD NOT do both.
 	-->
-	<rule ref="PSR1.Files.SideEffects" />
+	<!-- rule ref="PSR1.Files.SideEffects" /-->
 
 	<!-- 3.6. One Object Structure Per File -->
 	<!--

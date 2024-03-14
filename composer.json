@@ -10,11 +10,11 @@
         }
     ],
     "require": {
-        "php": ">=5.6",
-        "squizlabs/php_codesniffer": "^3.3.2",
-        "wp-coding-standards/wpcs": "^2.1.1",
-        "phpcompatibility/phpcompatibility-wp": "^2.0.0",
-        "phpmd/phpmd": "^2.6.0"
+        "php": ">=7.4",
+        "squizlabs/php_codesniffer": "^3.9.0",
+        "wp-coding-standards/wpcs": "^3.0.1",
+        "phpcompatibility/phpcompatibility-wp": "^2.1.4",
+        "phpmd/phpmd": "^2.15.0"
     },
     "require-dev": {
         "phpcompatibility/php-compatibility": "^9.0.0",
@@ -30,5 +30,10 @@
         ],
         "post-install-cmd": "composer config-set",
         "post-update-cmd": "composer config-set"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }

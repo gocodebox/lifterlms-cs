@@ -17,7 +17,7 @@
         "phpmd/phpmd": "^2.15.0"
     },
     "require-dev": {
-        "phpcompatibility/php-compatibility": "^9.0.0",
+        "phpcompatibility/php-compatibility": "^9.3.5",
         "roave/security-advisories": "dev-master"
     },
     "scripts": {

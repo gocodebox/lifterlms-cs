@@ -17,13 +17,9 @@
         "roave/security-advisories": "dev-master"
     },
     "scripts": {
-        "config-set" : [
-        ],
         "check-cs": [
             "\"vendor/bin/phpcs\" --runtime-set testVersion 7.4-"
-        ],
-        "post-install-cmd": "composer config-set",
-        "post-update-cmd": "composer config-set"
+        ]
     },
     "config": {
         "allow-plugins": {

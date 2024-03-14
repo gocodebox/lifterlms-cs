@@ -22,10 +22,9 @@
     },
     "scripts": {
         "config-set" : [
-            "\"vendor/bin/phpcs\" --config-set default_standard LifterLMS"
         ],
         "check-cs": [
-            "\"vendor/bin/phpcs\" --runtime-set testVersion 5.6-"
+            "\"vendor/bin/phpcs\" --runtime-set testVersion 7.4-"
         ],
         "post-install-cmd": "composer config-set",
         "post-update-cmd": "composer config-set"
